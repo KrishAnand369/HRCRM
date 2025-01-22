@@ -98,11 +98,13 @@ def new_project_view(request):
         dueDate = request.POST.get('dueDate')
         description = request.POST.get('description')
         priority = request.POST.get('priority')
+        status = request.POST.get('status')
         project = Project.objects.create(
             name=name,
             due_date=dueDate,
             description = description,
             priority = priority,
+            status = status,
         )
         assigned_users = request.POST.getlist('assignMembers')
         project.save()
@@ -115,7 +117,7 @@ def new_project_view(request):
     return render(request, 'app/webkit/projects.html', {'form': form, 'users': users})
 
 
-def project(request):
+def project_list(request):
     status = request.GET.get('status')  # Get the selected status
     users = UserProfile.objects.all()
     if status == 'All projects' or not status:  # If 'All projects' is selected or no status is provided

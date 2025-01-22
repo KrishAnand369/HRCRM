@@ -17,6 +17,6 @@ urlpatterns = [
     path('profile',views.userprofile,name='userprofile'),
     path('saveprofile/',views.save_profile,name='save_profile'),
     
-    path('project',views.project,name='project'),
+    path('projects',views.project_list,name='project'),
     path('new-project/', views.new_project_view, name='new_project'),
 ]

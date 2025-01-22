@@ -69,7 +69,7 @@
                     </div>
                     <div class="d-flex align-items-center justify-content-between mb-4">
                         <div id="circle-progress-{{ project.project.id }}" class="circle-progress-01 circle-progress circle-progress-success" data-min-value="0" data-max-value="100" data-value="{{ project.completion_percentage }}" data-type="percent"></div>
-                        <i class=" m-0 text-danger">Due: {{ project.project.due_date }} <br> <p>status: </p> </i>
+                        <i class=" m-0 ">Due: <span class="text-orange"> {{ project.project.due_date }}</span> <br> <p>status: <span class="text-pink">{{ project.project.status }} </span></p> </i>
                     </div>
                     <h5 class="mb-1">{{ project.project.name }}</h5>
                     <p class="mb-3">Preparing framework of block-based WordPress Theme.hai</p>
