@@ -1,0 +1,103 @@
+
+    {% extends 'app/webkit/main.html' %}
+    {% load static %}
+    
+    {% block content %}
+    <div class="container mt-5">
+        <h2>User Profile Form</h2>
+        <form method="POST" action="{% url 'CRM:save_profile' %}">
+            {% csrf_token %}
+            
+            <!-- About Section -->
+            <div class="form-group mb-3">
+                <label>About</label>
+                <textarea class="form-control" name="about" rows="3">{{ profile.about }}</textarea>
+            </div>
+            
+            <!-- role Section -->
+            <div class="form-group mb-3">
+                <label>Role</label>
+                <input class="form-control" type="text" name="role" value="{{ profile.role }}" required>
+                {% comment %} <textarea class="form-control" name="role" rows="3">{{ profile.role }}</textarea> {% endcomment %}
+            </div>
+            
+            <!-- phone Section -->
+            <div class="form-group mb-3">
+                <label>Phone</label>
+                <input class="form-control" type="text" name="phone" value="{{ profile.phone }}" required>
+                {% comment %} <textarea class="form-control" name="phone" rows="3">{{ profile.phone }}</textarea> {% endcomment %}
+            </div>
+            
+            <!-- country Section -->
+            <div class="form-group mb-3">
+                <label>Country</label>
+                <input class="form-control" type="text" name="country" value="{{ profile.country }}" required>
+                {% comment %} <textarea class="form-control" name="country" rows="3">{{ profile.country }}</textarea> {% endcomment %}
+            </div>
+
+            <!-- Skills Section -->
+            <label>Skills</label>
+            <div id="skillsContainer">
+                {% for skill in skills %}
+                <div class="skill-item d-flex gap-3 mb-2">
+                    <input class="form-control" type="text" name="skill_name[]" value="{{ skill.name }}" required>
+                    <input class="form-control" type="number" name="skill_proficiency[]" value="{{ skill.proficiency }}" min="0" max="100" required>
+                    <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()">Remove</button>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="btn btn-success mt-2" onclick="addSkillField()">+ Add Skill</button>
+
+            <!-- Education Section -->
+            <br>
+            <label class="mt-4">Education</label>
+            <div id="educationContainer">
+                {% for edu in education %}
+                    <div class="education-item d-flex gap-3 mb-2">
+                        <input class="form-control" type="text" name="institution[]" value="{{ edu.institution }}" required>
+                        <input class="form-control" type="text" name="course[]" value="{{ edu.course }}" required>
+                        <input class="form-control" type="number" name="start_year[]" value="{{ edu.start_year }}" required>
+                        <input class="form-control" type="number" name="end_year[]" value="{{ edu.end_year }}" required>
+                        <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()">Remove</button>
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="btn btn-success mt-2" onclick="addEducationField()">+ Add Education</button>
+
+            <!-- Submit Button -->
+            <div class="text-center">
+            <button type="submit" class="btn btn-primary mt-4">Save Profile</button>
+            </div>
+        </form>
+    </div>
+
+
+    <script>
+        // JavaScript for dynamically adding skill fields
+        function addSkillField() {
+            const container = document.getElementById('skillsContainer');
+            const skillHTML = `
+                <div class="skill-item d-flex gap-3 mb-2">
+                    <input class="form-control" type="text" name="skill_name[]" placeholder="Skill Name" required>
+                    <input class="form-control" type="number" name="skill_proficiency[]" placeholder="Proficiency (%)" min="0" max="100" required>
+                    <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()">Remove</button>
+                </div>`;
+            container.insertAdjacentHTML('beforeend', skillHTML);
+        }
+
+        // JavaScript for dynamically adding education fields
+        function addEducationField() {
+            const container = document.getElementById('educationContainer');
+            const educationHTML = `
+                <div class="education-item d-flex gap-3 mb-2">
+                    <input class="form-control" type="text" name="institution[]" placeholder="Institution Name" required>
+                    <input class="form-control" type="text" name="course[]" placeholder="Course" required>
+                    <input class="form-control" type="number" name="start_year[]" placeholder="Start Year" required>
+                    <input class="form-control" type="number" name="end_year[]" placeholder="End Year" required>
+                    <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()">Remove</button>
+                </div>`;
+                container.insertAdjacentHTML('beforeend', educationHTML);
+        }
+</script>
+
+{% endblock%}
