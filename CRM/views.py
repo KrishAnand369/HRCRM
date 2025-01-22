@@ -16,31 +16,7 @@ def home(request):
     return render(request,"app/webkit/main.html")
 
 
-def project(request):
-    status = request.GET.get('status')  # Get the selected status
-    users = UserProfile.objects.all()
-    if status == 'All projects' or not status:  # If 'All projects' is selected or no status is provided
-        projects = Project.objects.all()
-    elif status:  # If a specific status is selected
-        projects = Project.objects.filter(status=status)
-        
-    projects_with_completion = []
-    for project in projects:
-        total_tasks = project.tasks.count()
-        completed_tasks = project.tasks.filter(status='Completed').count()
-        completion_percentage = (completed_tasks / total_tasks * 100) if total_tasks > 0 else 0
 
-        projects_with_completion.append({
-            'project': project,
-            'completion_percentage': round(completion_percentage, 2),
-        })
-
-    context = {
-        'projects': projects_with_completion,
-        'status': status,
-        'users': users,
-    }
-    return render(request, 'app/webkit/projects.html', context)
 
 @login_required
 def userprofile(request):
@@ -116,10 +92,6 @@ def save_profile(request):
     
 
 
-        
-    
-
-
 def new_project_view(request):
     if request.method == 'POST':
         name = request.POST.get('projectName')
@@ -141,6 +113,35 @@ def new_project_view(request):
         form = ProjectForm()
     users = UserProfile.objects.all()  # Fetch all users
     return render(request, 'app/webkit/projects.html', {'form': form, 'users': users})
+
+
+def project(request):
+    status = request.GET.get('status')  # Get the selected status
+    users = UserProfile.objects.all()
+    if status == 'All projects' or not status:  # If 'All projects' is selected or no status is provided
+        projects = Project.objects.all()
+    elif status:  # If a specific status is selected
+        projects = Project.objects.filter(status=status)
+        
+    projects_with_completion = []
+    for project in projects:
+        total_tasks = project.tasks.count()
+        completed_tasks = project.tasks.filter(status='Completed').count()
+        completion_percentage = (completed_tasks / total_tasks * 100) if total_tasks > 0 else 0
+
+        projects_with_completion.append({
+            'project': project,
+            'completion_percentage': round(completion_percentage, 2),
+        })
+
+    context = {
+        'projects': projects_with_completion,
+        'status': status,
+        'users': users,
+    }
+    return render(request, 'app/webkit/projects.html', context)
+
+
 
 
 
