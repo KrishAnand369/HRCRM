@@ -29,7 +29,7 @@ def userprofile(request):
         'skills': skills,
         'education': education,
     }
-    return render(request,"app/user-profilepage.html",context)
+    return render(request,"app/webkit/user/user-profilepage.html",context)
 
 
 
@@ -86,10 +86,13 @@ def save_profile(request):
 
     skills = profile.skills.all()
     education = profile.education.all()
-    return render(request, 'app/user-edit-profile.html', {
+    return render(request, 'app/webkit/user/user-edit-profile.html', {
         'profile': profile, 'skills': skills, 'education': education
     })
-    
+ 
+ 
+def client_list(request):
+     return render(request, 'app/webkit/client/clientlist.html')  
 
 
 def new_project_view(request):
@@ -114,7 +117,7 @@ def new_project_view(request):
     else:
         form = ProjectForm()
     users = UserProfile.objects.all()  # Fetch all users
-    return render(request, 'app/webkit/projects.html', {'form': form, 'users': users})
+    return render(request, 'app/webkit/project/projects.html', {'form': form, 'users': users})
 
 
 def project_list(request):
@@ -141,7 +144,7 @@ def project_list(request):
         'status': status,
         'users': users,
     }
-    return render(request, 'app/webkit/projects.html', context)
+    return render(request, 'app/webkit/project/projects.html', context)
 
 
 
