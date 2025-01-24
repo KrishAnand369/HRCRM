@@ -21,4 +21,5 @@ urlpatterns = [
     path('new-project/', views.new_project_view, name='new_project'),
     
     path('clients',views.client_list,name='clientList'),
+    path('new-client/', views.client_register, name='new_client'),
 ]

@@ -1,0 +1,59 @@
+
+<div class="modal fade" role="dialog" aria-modal="true" id="new-client-modal">
+    <div class="modal-dialog  modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header d-block text-center pb-3 border-bttom">
+                <h3 class="modal-title" id="exampleModalCenterTitle01">New Cient</h3>
+            </div>
+            <form method="POST" action="{% url 'CRM:new_client' %}">
+                {% csrf_token %} 
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group mb-3">
+                                <label for="clientName" class="h5">Client User Name*</label>
+                                <input type="text" class="form-control" id="clientName" name="clientName" placeholder="Client UserName">
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group mb-3">
+                                <label for="password" class="h5">password*</label>
+                                <input type="text" class="form-control" id="clientPassword" name="clientPassword" placeholder="Client Password">
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group mb-3">
+                                <label for="companyName" class="h5">Company Name*</label>
+                                <input type="text" class="form-control" id="companyName" name="companyName" placeholder="Company Name">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <label for="companyName" class="h5">email*</label>
+                                <input type="text" class="form-control" id="clientemail" name="clientemail" placeholder="email Address">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <label for="companyName" class="h5">Contact Number*</label>
+                                <input type="text" class="form-control" id="contactNumber" name="contactNumber" placeholder="Contact Number">
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group mb-3">
+                                <label for="description" class="h5">Address*</label>
+                                <input type="textarea" class="form-control" id="address" name="address" placeholder="Client Address">
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="d-flex flex-wrap align-items-center justify-content-center mt-2">
+                                <button type="submit" class="btn btn-primary mr-3">Save</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> 

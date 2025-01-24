@@ -2,7 +2,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import UserProfile, Skill, Education,Project
+from .models import UserProfile,Project,Client,User
 from .projectForm import ProjectForm
 from datetime import datetime
 from django.contrib.auth import login, authenticate
@@ -91,8 +91,29 @@ def save_profile(request):
     })
  
  
+def client_register(request):
+    if request.method == 'POST':
+        username = request.POST.get('clientName')
+        email = request.POST.get('clientemail')
+        password = request.POST.get('clientPassword')
+        company_name = request.POST.get('companyName')
+        contact_number = request.POST.get('contactNumber')
+        address = request.POST.get('address')
+        # Create User
+        user = User.objects.create_user(username=username, email=email, password=password)
+
+        # Create Client Profile
+        Client.objects.create(user=user, company_name=company_name, contact_number=contact_number,address=address)
+
+        messages.success(request, "Client registered successfully!")
+        return redirect('CRM:clientList')
+
+    return render(request, 'app/webkit/client/clientlist.html')
+
+@login_required
 def client_list(request):
-     return render(request, 'app/webkit/client/clientlist.html')  
+    clients = Client.objects.all()
+    return render(request, 'app/webkit/client/clientlist.html',{ 'clients': clients })  
 
 
 def new_project_view(request):
@@ -117,12 +138,14 @@ def new_project_view(request):
     else:
         form = ProjectForm()
     users = UserProfile.objects.all()  # Fetch all users
-    return render(request, 'app/webkit/project/projects.html', {'form': form, 'users': users})
+    clients = Client.objects.all()  # Fetch all users
+    return render(request, 'app/webkit/project/projects.html', {'form': form, 'users': users, 'clients':clients,})
 
 
 def project_list(request):
     status = request.GET.get('status')  # Get the selected status
     users = UserProfile.objects.all()
+    clients = Client.objects.all()  # Fetch all clients
     if status == 'All projects' or not status:  # If 'All projects' is selected or no status is provided
         projects = Project.objects.all()
     elif status:  # If a specific status is selected
@@ -143,6 +166,7 @@ def project_list(request):
         'projects': projects_with_completion,
         'status': status,
         'users': users,
+        'clients':clients,
     }
     return render(request, 'app/webkit/project/projects.html', context)
 
