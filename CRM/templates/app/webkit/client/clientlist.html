@@ -46,7 +46,11 @@
                 <div class="card-body text-center p-0">                            
                     <div class="item">
                         <div class="odr-img">
-                            <img src="../assets/images/user/01.jpg" class="img-fluid rounded-circle avatar-90 m-auto" alt="image">
+                            {% if client.company_logo %}
+                            <img src="{{ client.company_logo.url }}" class="img-fluid rounded-circle avatar-90 m-auto" alt="image">
+                            {% else %}
+                            <img src="#" class="img-fluid rounded-circle avatar-90 m-auto" alt="image">
+                            {% endif %}
                         </div>                        
                         <div class="odr-content rounded">                                          
                             <h4 class="mb-2">{{ client.user.username }}</h4>
@@ -78,7 +82,11 @@
                     <tr>
                         <td>
                             <div class="media align-items-center">
-                                <img src="../assets/images/user/01.jpg" class="img-fluid rounded-circle avatar-40" alt="image">
+                                {% if client.company_logo %}
+                                <img src="{{ client.company_logo.url }}" class="img-fluid rounded-circle avatar-40" alt="image">
+                                {% else %}
+                                <img src="#" class="img-fluid rounded-circle avatar-40" alt="image">
+                                {% endif %}
                                 <h5 class="ml-3">{{client.user.username}}</h5>
                             </div>
                         </td>

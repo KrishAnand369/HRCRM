@@ -51,10 +51,10 @@
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group mb-3">
-                                <label for="exampleInputText2" class="h5">Client *</label>
+                                <label for="client" class="h5">Client *</label>
                                 <select name="client" class="selectpicker form-control" data-style="py-0">
                                     {% for client in clients %}
-                                        <option>{{ client.user.username }}</option>
+                                        <option value="{{ client.id }}">{{ client.user.username }}</option>
                                     {% endfor %} 
                                 </select>
                             </div>
@@ -62,7 +62,7 @@
                         <div class="col-lg-6">
                             <div class="form-group mb-3">
                                 <label for="exampleInputText2" class="h5">Status *</label>
-                                <select name="status" class="selectpicker form-control" data-style="py-0" placeholder="select status">
+                                <select name="status" class="selectpicker form-control" data-style="py-0" >
                                     <option>New</option>
                                     <option>In Progress</option>
                                     <option>Completed</option>

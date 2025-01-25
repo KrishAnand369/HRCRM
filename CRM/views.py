@@ -99,11 +99,17 @@ def client_register(request):
         company_name = request.POST.get('companyName')
         contact_number = request.POST.get('contactNumber')
         address = request.POST.get('address')
+        company_logo = request.FILES.get('client_logo')
+        if company_logo and company_logo.content_type not in ['image/jpeg', 'image/png']:
+            return render(request, 'app/webkit/client/clientlist.html', {
+                'error': 'Invalid file type. Only JPEG and PNG are allowed.',
+            })
+        print( company_logo)
         # Create User
         user = User.objects.create_user(username=username, email=email, password=password)
 
         # Create Client Profile
-        Client.objects.create(user=user, company_name=company_name, contact_number=contact_number,address=address)
+        Client.objects.create(user=user, company_name=company_name,company_logo=company_logo, contact_number=contact_number,address=address)
 
         messages.success(request, "Client registered successfully!")
         return redirect('CRM:clientList')
@@ -123,12 +129,14 @@ def new_project_view(request):
         description = request.POST.get('description')
         priority = request.POST.get('priority')
         status = request.POST.get('status')
+        client_id = request.POST.get('client')
         project = Project.objects.create(
             name=name,
             due_date=dueDate,
             description = description,
             priority = priority,
             status = status,
+            client_id = client_id,
         )
         assigned_users = request.POST.getlist('assignMembers')
         project.save()

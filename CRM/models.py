@@ -1,13 +1,18 @@
 from django.db import models
 from django.contrib.auth.models import User
+import datetime
+import os
 
-# Create your models here.
-from django.db import models
-from django.contrib.auth.models import User
 
+def get_file_path (request,filename):
+    original_filename = filename
+    nowTime = datetime.datetime.now().strftime('%Y%m%d%H:%M:%S')
+    filename="%s%s" %(nowTime,original_filename)
+    return os.path.join('uploads/',filename)
 class Client(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='client_profile')
     company_name = models.CharField(max_length=255)
+    company_logo = models.ImageField(upload_to=get_file_path, null=False, blank=True)
     contact_number = models.CharField(max_length=15, blank=True, null=True)
     address = models.TextField(blank=True, null=True)  # Add client-specific fields
 
@@ -46,6 +51,7 @@ class Team(models.Model):
 
 # Project Model
 class Project(models.Model):
+    client = models.ForeignKey(Client, related_name="projects", on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     due_date = models.DateField()
