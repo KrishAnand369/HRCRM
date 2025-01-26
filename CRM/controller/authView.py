@@ -30,10 +30,16 @@ def loginPage(request):
         user = authenticate(request,username=name,password =password)
 
         if user is not None:
-            login(request,user)
-            messages.success(request,"Logged in Successfully")
-            profile, created = UserProfile.objects.get_or_create(user=request.user)
-            return redirect('/home')
+            if hasattr(user, 'client_profile'):  # Check if the user is a client
+                print("hellow")
+                login(request, user)
+                messages.success(request, "Client signed in successfully!")
+                return redirect('CRM:project')  # Redirect to client dashboard
+            else: 
+                login(request,user)
+                messages.success(request,"Logged in Successfully")
+                profile, created = UserProfile.objects.get_or_create(user=request.user)
+                return redirect('/home',{ 'profile':profile})
         else:
             messages.error(request,"Invalid username or password")
             return redirect('/login')
@@ -48,9 +54,16 @@ def signin(request):
         user = authenticate(request, username=username, password=password)
         
         if user is not None:
-            login(request, user)
-            messages.success(request, "You have successfully signed in!")
-            return redirect('CRM:dashboard')  # Redirect to dashboard after login
+            if hasattr(user, 'client_profile'):  # Check if the user is a client
+                print("hellow")
+                login(request, user)
+                messages.success(request, "Client signed in successfully!")
+                return redirect('CRM:project')  # Redirect to client dashboard
+            else:   
+                print("hai") 
+                login(request, user)
+                messages.success(request, "You have successfully signed in!")
+                return redirect('CRM:dashboard')  # Redirect to dashboard after login
         else:
             messages.error(request, "Invalid credentials. Please try again.")
             return redirect('CRM:signin')

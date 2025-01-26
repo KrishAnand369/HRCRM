@@ -8,8 +8,13 @@
          <div class="card card-block p-card">
             <div class="profile-box">
                <div class="profile-card rounded">
+                  {% if profile.profile_pic %}
+                  <img src="{{ profile.profile_pic.url }}" alt="profile-bg"
+                     class="avatar-100 rounded d-block mx-auto img-fluid mb-3">
+                  {% else %}
                   <img src="{% static 'html/assets/images/user/1.jpg' %}" alt="profile-bg"
                      class="avatar-100 rounded d-block mx-auto img-fluid mb-3">
+                  {% endif %}
                   <h3 class="font-600 text-white text-center mb-0">{{ profile.user.username }}</h3>
                   <p class="text-white text-center mb-5">{{ profile.role }}</p>
                </div>

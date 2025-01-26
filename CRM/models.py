@@ -18,6 +18,7 @@ class Client(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_pic = models.ImageField(upload_to=get_file_path, null=False, blank=True)
     role = models.CharField(max_length=15, blank=False, null=False)
     phone = models.CharField(max_length=15, blank=False, null=False)
     country = models.CharField(max_length=15, blank=False, null=False)

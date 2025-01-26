@@ -50,6 +50,12 @@ def save_profile(request):
         profile.phone = phone
         country = request.POST.get('country')
         profile.country = country
+        profile_pic = request.FILES.get('profile_pic')
+        if profile_pic and profile_pic.content_type not in ['image/jpeg', 'image/png']:
+            return render(request, 'app/webkit/user/user-edit-profile.html', {
+                'error': 'Invalid file type. Only JPEG and PNG are allowed.',
+            })
+        profile.profile_pic = profile_pic
         profile.save()
         
         # Saving skills (only add new skills)
@@ -104,7 +110,6 @@ def client_register(request):
             return render(request, 'app/webkit/client/clientlist.html', {
                 'error': 'Invalid file type. Only JPEG and PNG are allowed.',
             })
-        print( company_logo)
         # Create User
         user = User.objects.create_user(username=username, email=email, password=password)
 

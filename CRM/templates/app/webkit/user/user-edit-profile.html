@@ -5,7 +5,7 @@
     {% block content %}
     <div class="container mt-5">
         <h2>User Profile Form</h2>
-        <form method="POST" action="{% url 'CRM:save_profile' %}">
+        <form method="POST" action="{% url 'CRM:save_profile' %}" enctype ="multipart/form-data">
             {% csrf_token %}
             
             <!-- About Section -->
@@ -26,6 +26,15 @@
                 <label>Phone</label>
                 <input class="form-control" type="text" name="phone" value="{{ profile.phone }}" required>
                 {% comment %} <textarea class="form-control" name="phone" rows="3">{{ profile.phone }}</textarea> {% endcomment %}
+            </div>
+
+            <!-- phone Section -->
+            <div class="form-group mb-3">
+                <label for="profile_pic" class="h5">Profile Picture</label>
+                                <input type="file" name="profile_pic" id="profile_pic" class="form-control" value="{{ Profile.profile_pic.url }}">
+                                {% if form.client_logo.errors %}
+                                    <p class="text-danger">{{ form.client_logo.errors.0 }}</p>
+                                {% endif %}
             </div>
             
             <!-- country Section -->
