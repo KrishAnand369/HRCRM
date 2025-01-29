@@ -13,7 +13,8 @@ def landing(request):
 
 @login_required
 def home(request):
-    return render(request,"app/webkit/main.html")
+    profile = UserProfile.objects.get(user=request.user)
+    return render(request,"app/webkit/main.html",{'profile': profile,})
 
 
 
@@ -99,6 +100,7 @@ def save_profile(request):
  
 def client_register(request):
     if request.method == 'POST':
+        profile = UserProfile.objects.get(user=request.user)
         username = request.POST.get('clientName')
         email = request.POST.get('clientemail')
         password = request.POST.get('clientPassword')
@@ -124,10 +126,12 @@ def client_register(request):
 @login_required
 def client_list(request):
     clients = Client.objects.all()
-    return render(request, 'app/webkit/client/clientlist.html',{ 'clients': clients })  
+    profile = UserProfile.objects.get(user=request.user)
+    return render(request, 'app/webkit/client/clientlist.html',{'profile': profile, 'clients': clients })  
 
 
 def new_project_view(request):
+    profile = UserProfile.objects.get(user=request.user)
     if request.method == 'POST':
         name = request.POST.get('projectName')
         dueDate = request.POST.get('dueDate')
@@ -152,10 +156,11 @@ def new_project_view(request):
         form = ProjectForm()
     users = UserProfile.objects.all()  # Fetch all users
     clients = Client.objects.all()  # Fetch all users
-    return render(request, 'app/webkit/project/projects.html', {'form': form, 'users': users, 'clients':clients,})
+    return render(request, 'app/webkit/project/projects.html', {'form': form, 'users': users, 'clients':clients,'profile': profile,})
 
-
+@login_required
 def project_list(request):
+    profile = UserProfile.objects.get(user=request.user)
     status = request.GET.get('status')  # Get the selected status
     users = UserProfile.objects.all()
     clients = Client.objects.all()  # Fetch all clients
@@ -180,10 +185,14 @@ def project_list(request):
         'status': status,
         'users': users,
         'clients':clients,
+        'profile': profile,
     }
     return render(request, 'app/webkit/project/projects.html', context)
 
-
+@login_required
+def task_list(request):
+    profile = UserProfile.objects.get(user=request.user)
+    return render(request,"app/webkit/task/tasks.html",{'profile': profile,})
 
 
 

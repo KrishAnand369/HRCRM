@@ -68,7 +68,7 @@
                             </a>
                         </li>
                         <li class="">
-                            <a href="../backend/page-task.html" class="svg-icon">                        
+                            <a href="{% url 'CRM:taskList' %}" class="svg-icon">                        
                                 <svg class="svg-icon" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
                                     <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
@@ -681,7 +681,7 @@
                                     <a href="#" class="search-toggle dropdown-toggle  d-flex align-items-center" id="dropdownMenuButton4"
                                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         {% if profile.profile_pic %}
-                                        <img src="{{ profile.profile_pic.url }}" class="img-fluid rounded-circle" alt="user">
+                                        <img src="{{ request.profile_pic_url }}" class="img-fluid rounded-circle" alt="user">
                                         {% else %}
                                         <img src="{% static 'html/assets/images/user/1.jpg' %}" class="img-fluid rounded-circle" alt="user">
                                         {% endif %}

@@ -17,7 +17,7 @@ class Client(models.Model):
     address = models.TextField(blank=True, null=True)  # Add client-specific fields
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE,related_name="profile")
     profile_pic = models.ImageField(upload_to=get_file_path, null=False, blank=True)
     role = models.CharField(max_length=15, blank=False, null=False)
     phone = models.CharField(max_length=15, blank=False, null=False)

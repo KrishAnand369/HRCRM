@@ -22,4 +22,7 @@ urlpatterns = [
     
     path('clients',views.client_list,name='clientList'),
     path('new-client/', views.client_register, name='new_client'),
+    
+    path('tasks',views.task_list,name='taskList'),
+    #path('new-task/', views.task_register, name='new_task'),
 ]
