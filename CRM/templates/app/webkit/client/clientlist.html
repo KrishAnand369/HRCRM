@@ -1,6 +1,5 @@
 {% extends 'app/webkit/main.html' %}
 {% load static %}
-
 {% block content %}
 <div class="row">
     <div class="col-lg-12">
@@ -26,8 +25,8 @@
                             </div>
                         </div>
                         <div class="pl-3 border-left btn-new">
-                            <a href="#" class="btn btn-primary" data-target="#new-client-modal" data-toggle="modal">New Client</a>
-                            {% include 'app/webkit/Modals/clientModal.html' %}
+                             <button class="btn btn-primary" data-toggle="modal" data-target="#edit-client-modal-new">New Client</button>
+                             {% include 'app/webkit/Modals/clientModal.html' with client=None %}
                         </div>
                     </div>
                 </div>
@@ -103,11 +102,15 @@
                         </td>
                         <td>
                             <div class="d-flex align-items-center">
-                                <a href="#" class="text-body"><i class="las la-pen mr-3"></i></a>
+                                <i class="las la-pen mr-3"  data-target="#edit-client-modal-{{ client.id }}" data-toggle="modal"></i>
+                                {% include 'app/webkit/Modals/clientModal.html' with client=client %}
+
+                                
                                 <a href="#" class="text-body"><i class="las la-trash-alt mr-0"></i></a>
                             </div>
                         </td>
-                    </tr>
+                    </tr> 
+                    
                     {% empty %}
                         <h4>No Clients added yet.</h4>
                     {% endfor %}
@@ -116,4 +119,15 @@
         </div>
     </div>    
 </div>
+{% comment %} <script>
+    $(document).on('click', '[data-toggle="modal"]', function () {
+        var clientId = $(this).data('client-id');
+        $('#edit-client-modal-' + clientId).modal({ show: true, backdrop: 'static' });
+    });
+
+    $(document).on('click', '.la-pen', function() {
+        var clientId = $(this).data('client-id');
+        $('#edit-client-modal-' + clientId).modal({ show: true, backdrop: 'static' });
+    });
+</script> {% endcomment %}
 {% endblock %}

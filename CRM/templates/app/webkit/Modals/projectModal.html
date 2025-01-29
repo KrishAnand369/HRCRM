@@ -1,88 +1,84 @@
-
-<div class="modal fade" role="dialog" aria-modal="true" id="new-project-modal">
-    <div class="modal-dialog  modal-dialog-centered" role="document">
+<div class="modal fade" role="dialog" aria-modal="true" id="project-modal-{% if project %}{{ project.id }}{% else %}new{% endif %}">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-header d-block text-center pb-3 border-bttom">
-                <h3 class="modal-title" id="exampleModalCenterTitle01">New Project</h3>
+            <div class="modal-header  text-center pb-3 border-bottom">
+                <h3 class="modal-title">{% if project %}Edit Project{% else %}New Project test{% endif %}</h3>
+                {% if project %}
+                {% else %}
+                <a href="#" class="svg-icon" data-dismiss="modal">                        
+                    <svg class="svg-icon" width="35" height="35" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 18 18 6M6 6l12 12"></path>
+                        
+                    </svg>
+                </a>
+                {% endif %}
             </div>
-            <form method="POST" action="{% url 'CRM:new_project' %}">
-                {% csrf_token %} 
+            <form method="POST" action="{% if project and project.id %}{% url 'CRM:edit_project' project.id %}{% else %}{% url 'CRM:new_project' %}{% endif %}">
+                {% csrf_token %}
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="form-group mb-3">
                                 <label for="projectName" class="h5">Project Name*</label>
-                                <input type="text" class="form-control" id="projectName" name="projectName" placeholder="Project Name">
+                                <input type="text" class="form-control" id="projectName" name="projectName" value="{% if project %}{{ project.name }}{% endif %}" placeholder="Project Name">
                             </div>
                         </div>
                         <div class="col-lg-12">
                             <div class="form-group mb-3">
                                 <label for="description" class="h5">Description*</label>
-                                <input type="textarea" class="form-control" id="description" name="description" placeholder="Project description">
+                                <textarea class="form-control" id="description" name="description" placeholder="Project Description">{% if project %}{{ project.description }}{% endif %}</textarea>
                             </div>
                         </div>
-                        {% comment %} <div class="col-lg-6">
-                            <div class="form-group mb-3">
-                                <label for="exampleInputText2" class="h5">Categories *</label>
-                                <select name="type" class="selectpicker form-control" data-style="py-0">
-                                    <option>Category</option>
-                                    <option>Android</option>
-                                    <option>IOS</option>
-                                    <option>Ui/Ux Design</option>
-                                    <option>Development</option>
-                                </select>
-                            </div>
-                        </div> {% endcomment %}
                         <div class="col-lg-6">
                             <div class="form-group mb-3">
-                                <label for="dueDate" class="h5">Due Dates*</label>
-                                <input type="date" class="form-control" id="dueDate" name="dueDate" value="">
+                                <label for="dueDate" class="h5">Due Date*</label>
+                                <input type="date" class="form-control" id="dueDate" name="dueDate" value="{% if project %}{{ project.due_date|date:'Y-m-d' }}{% endif %}">
                             </div>                        
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group mb-3">
-                                <label for="exampleInputText2" class="h5">Priority *</label>
-                                <select name="priority" class="selectpicker form-control" data-style="py-0">
-                                    <option>High</option>
-                                    <option>Medium</option>
-                                    <option>Low</option>
+                                <label for="priority" class="h5">Priority *</label>
+                                <select name="priority" class="form-control">
+                                    <option value="High" {% if project.priority == "High" %}selected{% endif %}>High</option>
+                                    <option value="Medium" {% if project.priority == "Medium" %}selected{% endif %}>Medium</option>
+                                    <option value="Low" {% if project.priority == "Low" %}selected{% endif %}>Low</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group mb-3">
                                 <label for="client" class="h5">Client *</label>
-                                <select name="client" class="selectpicker form-control" data-style="py-0">
+                                <select name="client" class="form-control">
                                     {% for client in clients %}
-                                        <option value="{{ client.id }}">{{ client.user.username }}</option>
-                                    {% endfor %} 
+                                        <option value="{{ client.id }}" {% if project.client.id == client.id %}selected{% endif %}>{{ client.user.username }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group mb-3">
-                                <label for="exampleInputText2" class="h5">Status *</label>
-                                <select name="status" class="selectpicker form-control" data-style="py-0" >
-                                    <option>New</option>
-                                    <option>In Progress</option>
-                                    <option>Completed</option>
+                                <label for="status" class="h5">Status *</label>
+                                <select name="status" class="form-control">
+                                    <option value="New" {% if project.status == "New" %}selected{% endif %}>New</option>
+                                    <option value="In Progress" {% if project.status == "In Progress" %}selected{% endif %}>In Progress</option>
+                                    <option value="Completed" {% if project.status == "Completed" %}selected{% endif %}>Completed</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-lg-12">
                             <div class="form-group mb-3">
                                 <label for="assignMembers" class="h5">Assign Members*</label>
-                                <select name="assignMembers" id="assignMembers" class="selectpicker form-control" multiple data-style="py-0">
+                                <select name="assignMembers" id="assignMembers" class="form-control" multiple>
                                     {% for user in users %}
-                                        <option value="{{ user.id }}">{{ user.user.username }}</option>
-                                    {% endfor %} 
+                                        <option value="{{ user.id }}" {% if user in project.assigned_users.all %}selected{% endif %}>{{ user.user.username }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                         </div>
                         <div class="col-lg-12">
                             <div class="d-flex flex-wrap align-items-center justify-content-center mt-2">
                                 <button type="submit" class="btn btn-primary mr-3">Save</button>
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                             </div>
                         </div>
                     </div>
@@ -90,4 +86,4 @@
             </form>
         </div>
     </div>
-</div> 
+</div>

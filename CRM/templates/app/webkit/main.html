@@ -502,7 +502,7 @@
                         </button>
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav ml-auto navbar-list align-items-center">
-                                <li>
+                                {% comment %} <li>
                                     <div class="iq-search-bar device-search">
                                         <form action="#" class="searchbox">
                                             <a class="search-link" href="#"><i class="ri-search-line"></i></a>
@@ -525,6 +525,7 @@
                                         </form>
                                     </div>
                                 </li>
+                                 {% endcomment %}
                                 <li class="nav-item nav-icon nav-item-icon dropdown">
                                     <a href="#" class="search-toggle dropdown-toggle" id="dropdownMenuButton2"
                                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -755,9 +756,25 @@
             </div>
         </footer>
     <!-- Backend Bundle JavaScript -->
-    <script src="{% static 'webkit/assets/js/backend-bundle.min.js' %}"></script>
+    <script src="{% static 'webkit/assets/js/backend-bundle.min.js' %}"></script> 
     
-    <!-- Table Treeview JavaScript -->
+    <script>
+        $(document).ready(function(){
+            $('.modal').on('hidden.bs.modal', function () {
+                if ($('.modal.show').length) {
+                    $('body').addClass('modal-open'); // Keep the modal background active
+                }
+            });
+        });
+        </script>
+        <script>
+            $(document).on('click', '[data-toggle="modal"]', function () {
+                setTimeout(function () {
+                    $('.modal-backdrop').remove();
+                }, 500);
+            });
+        </script>
+    {% comment %} <!-- Table Treeview JavaScript -->
     <script src="{% static 'webkit/assets/js/table-treeview.js' %}"></script>
     
     <!-- Chart Custom JavaScript -->
@@ -766,7 +783,7 @@
     <!-- Chart Custom JavaScript -->
     <script async src="{% static 'webkit/assets/js/chart-custom.js' %}"></script>
     <!-- Chart Custom JavaScript -->
-    <script async src="{% static 'webkit/assets/js/slider.js' %}"></script>
+    <script async src="{% static 'webkit/assets/js/slider.js' %}"></script> {% endcomment %}
     
     <!-- app JavaScript -->
     <script src="{% static 'webkit/assets/js/app.js' %}"></script>

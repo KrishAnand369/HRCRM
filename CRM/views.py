@@ -1,5 +1,5 @@
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render,get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import UserProfile,Project,Client,User
@@ -40,9 +40,6 @@ def save_profile(request):
     
     if request.method == 'POST':
         # Fetching basic info
-        about = request.POST.get('about')
-        
-        
         about = request.POST.get('about')
         profile.about = about
         role = request.POST.get('role')
@@ -98,7 +95,7 @@ def save_profile(request):
     })
  
  
-def client_register(request):
+def client_register(request, client_id=None):
     if request.method == 'POST':
         profile = UserProfile.objects.get(user=request.user)
         username = request.POST.get('clientName')
@@ -108,20 +105,39 @@ def client_register(request):
         contact_number = request.POST.get('contactNumber')
         address = request.POST.get('address')
         company_logo = request.FILES.get('client_logo')
+
         if company_logo and company_logo.content_type not in ['image/jpeg', 'image/png']:
-            return render(request, 'app/webkit/client/clientlist.html', {
-                'error': 'Invalid file type. Only JPEG and PNG are allowed.',
-            })
-        # Create User
-        user = User.objects.create_user(username=username, email=email, password=password)
+            messages.error(request, 'Invalid file type. Only JPEG and PNG are allowed.')
+            return redirect('CRM:clientList')
 
-        # Create Client Profile
-        Client.objects.create(user=user, company_name=company_name,company_logo=company_logo, contact_number=contact_number,address=address)
+        if client_id:
+            # Update existing client
+            client = get_object_or_404(Client, id=client_id)
+            client.company_name = company_name
+            client.contact_number = contact_number
+            client.address = address
+            if company_logo:
+                client.company_logo = company_logo
+            client.user.username = username
+            client.user.email = email
+            if password:
+                client.user.set_password(password)  # Only update password if provided
+            client.user.save()
+            client.save()
+            messages.success(request, "Client updated successfully!")
+        else:
+            # Create new client
+            user = User.objects.create_user(username=username, email=email, password=password)
+            Client.objects.create(user=user, company_name=company_name, company_logo=company_logo, contact_number=contact_number, address=address)
+            messages.success(request, "Client registered successfully!")
 
-        messages.success(request, "Client registered successfully!")
         return redirect('CRM:clientList')
 
-    return render(request, 'app/webkit/client/clientlist.html')
+    client = None
+    if client_id:
+        client = get_object_or_404(Client, id=client_id)
+
+    return render(request, 'app/webkit/client/clientlist.html', {'client': client,'profile':profile})
 
 @login_required
 def client_list(request):
@@ -129,34 +145,6 @@ def client_list(request):
     profile = UserProfile.objects.get(user=request.user)
     return render(request, 'app/webkit/client/clientlist.html',{'profile': profile, 'clients': clients })  
 
-
-def new_project_view(request):
-    profile = UserProfile.objects.get(user=request.user)
-    if request.method == 'POST':
-        name = request.POST.get('projectName')
-        dueDate = request.POST.get('dueDate')
-        description = request.POST.get('description')
-        priority = request.POST.get('priority')
-        status = request.POST.get('status')
-        client_id = request.POST.get('client')
-        project = Project.objects.create(
-            name=name,
-            due_date=dueDate,
-            description = description,
-            priority = priority,
-            status = status,
-            client_id = client_id,
-        )
-        assigned_users = request.POST.getlist('assignMembers')
-        project.save()
-        project.assigned_users.set(assigned_users)
-        
-        return redirect('CRM:project')  # Replace with your actual redirect
-    else:
-        form = ProjectForm()
-    users = UserProfile.objects.all()  # Fetch all users
-    clients = Client.objects.all()  # Fetch all users
-    return render(request, 'app/webkit/project/projects.html', {'form': form, 'users': users, 'clients':clients,'profile': profile,})
 
 @login_required
 def project_list(request):
@@ -200,7 +188,47 @@ def task_list(request):
 
 
 
+def project_save(request, project_id=None):
+    project = None
+    if project_id:  # Edit existing project
+        project = get_object_or_404(Project, id=project_id)
+    if request.method == 'POST':
+        name = request.POST.get('projectName')
+        due_date = request.POST.get('dueDate')
+        description = request.POST.get('description')
+        priority = request.POST.get('priority')
+        status = request.POST.get('status')
+        client_id = request.POST.get('client')
+        assigned_users = request.POST.getlist('assignMembers')
 
+        if project:  # Update existing project
+            project.name = name
+            project.due_date = due_date
+            project.description = description
+            project.priority = priority
+            project.status = status
+            project.client_id = client_id
+            project.assigned_users.set(assigned_users)
+            project.save()
+        else:  # Create new project
+            project = Project.objects.create(
+                name=name,
+                due_date=due_date,
+                description=description,
+                priority=priority,
+                status=status,
+                client_id=client_id,
+            )
+            project.assigned_users.set(assigned_users)
+
+        return redirect('CRM:project')
+    profile = UserProfile.objects.get(user=request.user)
+    
+    users = UserProfile.objects.all()
+    clients = Client.objects.all()
+    return render(request, 'app/webkit/project/projects.html', {
+        'users': users, 'clients': clients, 'profile': profile, 'project': project
+    })
 
 
 

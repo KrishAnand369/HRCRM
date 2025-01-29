@@ -1,7 +1,6 @@
 from django.urls import path
 from . import views
 from CRM.controller import authView
-from django.contrib.auth.views import LoginView, LogoutView
 
 app_name ="CRM"
 urlpatterns = [
@@ -18,10 +17,12 @@ urlpatterns = [
     path('saveprofile/',views.save_profile,name='save_profile'),
     
     path('projects',views.project_list,name='project'),
-    path('new-project/', views.new_project_view, name='new_project'),
+    path('project/new/', views.project_save, name='new_project'),  # Create new project
+    path('project/edit/<int:project_id>/', views.project_save, name='edit_project'),
     
     path('clients',views.client_list,name='clientList'),
-    path('new-client/', views.client_register, name='new_client'),
+    path('client/register/', views.client_register, name='client_create'),
+    path('client/register/<int:client_id>/', views.client_register, name='client_edit'),
     
     path('tasks',views.task_list,name='taskList'),
     #path('new-task/', views.task_register, name='new_task'),

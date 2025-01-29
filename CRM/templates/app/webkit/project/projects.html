@@ -49,8 +49,8 @@
                             </div>
                         </div>
                         <div class="pl-3 border-left btn-new">
-                            <a href="#" class="btn btn-primary" data-target="#new-project-modal" data-toggle="modal">New Project</a>
-                            {% include 'app/webkit/Modals/projectModal.html' %}
+                            <a href="#" class="btn btn-success" data-target="#project-modal-new" data-toggle="modal">New Project</a>
+                            {% include 'app/webkit/Modals/projectModal.html' with project=None %}
                         </div>
                     </div>
                 </div>
@@ -67,7 +67,9 @@
                     <div class="d-flex align-items-center justify-content-between mb-4">
                         <h6 class="mb-1 "> Client : <span class = "text-green">{{ project.project.client.company_name}}</span> </h6>
                         <div class="d-flex align-items-center">
-                            <a href="#" class="text-body text-blue"><i class="las la-pen mr-0"></i></a>
+                            <a href="#" class="text-body text-blue" data-target="#project-modal-{{ project.project.id }}" data-toggle="modal"><i class="las la-pen mr-0"></i></a>
+                            {% comment %} {% include 'app/webkit/Modals/projectModal1.html' with project=project %} {% endcomment %}
+                            {% include 'app/webkit/Modals/projectModal.html' with project=project.project %}
                             <a href="#" class="text-body text-red"><i class="las la-trash-alt mr-0"></i></a>
                         </div> 
                     </div>
@@ -121,7 +123,7 @@
                                     <img class="img-fluid avatar-40 rounded-circle" src="../assets/images/user/06.jpg" alt="">
                                 </a>
                             </div>
-                            <a class="btn btn-white text-primary link-shadow">High</a>
+                            <a class="btn btn-white text-primary link-shadow">{{ project.project.priority }}</a>
                         </div>
                     </div>
                 </div>
