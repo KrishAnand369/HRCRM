@@ -1,0 +1,173 @@
+<div class="collapse" id="collapseEdit1{{ task.task.id }}">
+    <div class="card card-list task-card">
+        <form method="POST" action="">
+        </form>
+        <form method="POST" action="{% if task.task.id %}{% url 'CRM:update_task' task.task.id %}{% endif %}" id="task-form-{{ task.task.id }}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="card-header d-flex align-items-center justify-content-between px-0 mx-3">
+                <div class="header-title">
+                    <div class="custom-control custom-checkbox custom-control-inline">
+                        <input type="checkbox" class="custom-control-input" id="customCheck05{{task.task.id}}" 
+                        {% if task.task.status == "Completed" %}checked{% endif %}>
+                        <label class="custom-control-label h5" for="customCheck05">Mark as done</label>
+                    </div>
+                </div>
+                <div><a href="#" class="btn bg-secondary-light">Project : {{ task.task.project.name }}</a>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Task Name -->
+                <div class="form-group mb-3 position-relative">
+                    <input type="text" name="name" class="form-control bg-white" value="{{ task.task.name }}">
+                </div>
+
+                <!-- Task Description -->
+                <div class="form-group mb-3">
+                    <label class="h5">Description</label>
+                    <textarea name="description" class="form-control bg-white">{{ task.task.description }}</textarea>
+                </div>
+
+                <!-- Due Date & Assigned User -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group mb-0">
+                                    <label class="h5">Assigned To</label>
+                                    <select name="assigned_to" class="form-control">
+                                        <option value="">Select a Member</option>
+                                        {% for user in users %}
+                                            <option value="{{ user.id }}" {% if task.task.assigned_to.id == user.id %}selected{% endif %}>{{ user.user.username }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group mb-0">
+                                    <label class="h5">Due Date*</label>
+                                    <input type="date" name="due_date" class="form-control"  value="{{ task.task.due_date|date:'Y-m-d' }}">
+                                </div>                        
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Priority & Status -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group mb-3">
+                                    <label for="priority" class="h5">Priority *</label>
+                                    <select name="priority" class="form-control">
+                                        <option value="High" {% if task.task.priority == "High" %}selected{% endif %}>High</option>
+                                        <option value="Medium" {% if task.task.priority == "Medium" %}selected{% endif %}>Medium</option>
+                                        <option value="Low" {% if task.task.priority == "Low" %}selected{% endif %}>Low</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group mb-3">
+                                    <label for="status" class="h5">Status *</label>
+                                    <select name="status" class="form-control">
+                                        <option value="New" {% if task.task.status == "New" %}selected{% endif %}>New</option>
+                                        <option value="In Progress" {% if task.task.status == "In Progress" %}selected{% endif %}>In Progress</option>
+                                        <option value="Completed" {% if task.task.status == "Completed" %}selected{% endif %}>Completed</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Checklist -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="mb-2">Checklist</h5>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                {% for item in task.checklists.all %}
+                                    <div class="custom-control custom-checkbox custom-control-inline mr-0">
+                                        <input type="checkbox" class="custom-control-input" 
+                                               id="customCheck{{ task.task.id }}_{{ forloop.counter }}" 
+                                               name="checklist_items" 
+                                               value="{{ item.id }}" 
+                                               {% if item.is_completed %}checked{% endif %}> 
+                                        <label class="custom-control-label mb-1" for="customCheck{{ task.task.id }}_{{ forloop.counter }}">{{ item.item }}</label>
+                                    </div>
+                                    <br>
+                                {% empty %}
+                                    <li>No checklist added yet.</li>
+                                {% endfor %}
+                                <div class="form-group mb-3">
+                                    <input type="text" class="form-control" id="task-checklist" name="checklist_edit" placeholder="Add List (comma-separated)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comments -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="mb-2">Comments</h5>
+                        <div class="row">
+                            
+                            <div class="col-lg-12">
+                               
+                                {% for item in task.comments.all %}
+                                <div>
+                                    
+                                    <h6 id="customComment{{ task.task.id }}_{{ forloop.counter }}" class=""><span class="text-green">{{item.user}} </span>: {{ item.text }}<small> ({{item.created_at}}) </small></h6>
+                                </div>
+                                {% empty %}
+                                <li>No Comments added yet.</li>
+                                {% endfor %}
+                            </div>
+                            <div class="col-lg-12 mt-2">
+                                <div class="form-group mb-3">
+                                    <label for="exampleInputText005" class="h5">new  Comment</label>
+                                    <input type="text" class="form-control" id="exampleInputText005"  name="comments" placeholder="Add Comment">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attachments -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="mb-2">Attachments</h5>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                
+                                <ul>
+                                    {% for attachment in task.attachments.all %}
+                                    <li>
+                                        <a href="{{ attachment.file.url }}" target="_blank">{{ attachment.file.name }}</a>
+                                        <small>(Uploaded on: {{ attachment.uploaded_at }})</small>
+                                    </li>
+                                    {% empty %}
+                                        <li>No Attachments added yet.</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group mb-3">
+                                    <label for="exampleInputText005" class="h5">new  Attachment</label>
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" name="attachments" id="inputGroupFile003">
+                                        <label class="custom-file-label" for="inputGroupFile003">Upload media</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="form.submit" id="saveChangesBtn-{{ task.task.id }}" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>

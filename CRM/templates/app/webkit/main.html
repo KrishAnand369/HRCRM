@@ -774,6 +774,20 @@
                 }, 500);
             });
         </script>
+
+        {% comment %} <script>
+            document.getElementById('saveChangesBtn').addEventListener('click', function() {
+                var form = document.querySelector('form');
+                var taskId = {{ task.task.id }};  // Pass the task ID dynamically from your template
+                var url = "{% url 'CRM:update_task' task.task.id %}";  // Get the URL dynamically from the Django template
+            
+                // Set the form action to the correct URL
+                form.action = url;
+            
+                // Submit the form
+                form.submit();
+            });
+        </script> {% endcomment %}
     {% comment %} <!-- Table Treeview JavaScript -->
     <script src="{% static 'webkit/assets/js/table-treeview.js' %}"></script>
     

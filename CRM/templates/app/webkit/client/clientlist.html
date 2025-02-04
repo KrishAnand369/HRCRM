@@ -24,10 +24,12 @@
                                 </div>
                             </div>
                         </div>
+                        {% if user.is_superuser %}
                         <div class="pl-3 border-left btn-new">
                              <button class="btn btn-primary" data-toggle="modal" data-target="#edit-client-modal-new">New Client</button>
                              {% include 'app/webkit/Modals/clientModal.html' with client=None %}
                         </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -100,6 +102,7 @@
                         <td>
                             <a href="#" class="btn btn-primary">Message</a>
                         </td>
+                        {% if user.is_superuser %}
                         <td>
                             <div class="d-flex align-items-center">
                                 <i class="las la-pen mr-3"  data-target="#edit-client-modal-{{ client.id }}" data-toggle="modal"></i>
@@ -109,6 +112,7 @@
                                 <a href="#" class="text-body"><i class="las la-trash-alt mr-0"></i></a>
                             </div>
                         </td>
+                        {% endif %}
                     </tr> 
                     
                     {% empty %}

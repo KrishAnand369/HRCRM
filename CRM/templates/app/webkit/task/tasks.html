@@ -10,23 +10,31 @@
                     <div class="d-flex flex-wrap align-items-center justify-content-between breadcrumb-content">
                         <h5>Your Task</h5>
                         <div class="d-flex flex-wrap align-items-center">
-                            <div class="dropdown dropdown-project mr-3">
-                                <div class="dropdown-toggle" id="dropdownMenuButton03" data-toggle="dropdown">
-                                <div class="btn bg-body"><span class="h6">Project :</span> webkit Project<i class="ri-arrow-down-s-line ml-2 mr-0"></i></div>
+                            <form method="GET" action="{% url 'CRM:taskList' %}">
+                                <div class="dropdown status-dropdown mr-3">
+                                    
+                                    <select name="project_selected" id="project_selected" class="form-control" onchange="this.form.submit()">
+                                        <option value='All Tasks'>select project</option>
+                                        <option value='All Tasks' {% if not request.GET.project_selected or request.GET.project_selected == 'All Tasks' %}selected{% endif %}>All Projects</option>
+                                        {% for project in projects %}
+                                            <option value="{{ project.id }}" {% if request.GET.project_selected == project.id|stringformat:"s" %}selected{% endif %}>{{ project.name }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton03">
-                                    <a class="dropdown-item" href="#"><i class="ri-mic-line mr-2"></i>In Progress</a>
-                                    <a class="dropdown-item" href="#"><i class="ri-attachment-line mr-2"></i>Priority</a>
-                                    <a class="dropdown-item" href="#"><i class="ri-file-copy-line mr-2"></i>Category</a> 
-                                </div>
-                            </div>
+                            </form>
+                            {% if user.is_superuser %}
                             <a href="#" class="btn btn-primary" data-target="#new-task-modal" data-toggle="modal">New Task</a>
                             {% include 'app/webkit/Modals/taskModal.html' %}
-                        </div>
+                            {% endif %}
+                        </div> 
                     </div>
                 </div>
             </div>
         </div>
+        </div>
+
+        
+        {% for task in tasks %}
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
@@ -37,120 +45,63 @@
                                     <div class="d-flex flex-wrap align-items-center justify-content-between">
                                         <div class="d-flex align-items-center">
                                             <div class="custom-control custom-task custom-checkbox custom-control-inline">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck01">
+                                                <input type="checkbox" class="custom-control-input" id="customCheck01{{task.task.id}}" {% if task.task.status == "Completed" %}checked{% endif %}>
                                                 <label class="custom-control-label" for="customCheck01"></label>
                                             </div>
                                             <div>
-                                                <h5 class="mb-2">Design landing page of webkit</h5>
+                                                <h5 class="mb-2">{{ task.task.name }}</h5>
                                                 <div class="media align-items-center">
-                                                    <div class="btn bg-body mr-3"><i class="ri-align-justify mr-2"></i>5/10</div>
-                                                    <div class="btn bg-body"><i class="ri-survey-line mr-2"></i>3</div>
+                                                    <div class="btn bg-body mr-3"><i class="ri-align-justify mr-2"></i>{{task.completed_items}}/{{task.checklists.count}}</div>
+                                                    {% comment %} <div class="btn bg-body"><i class="ri-survey-line mr-2"></i>{{task.attachments.count}}</div> {% endcomment %}
+                                                    <div class="btn bg-body mr-3">
+                                                        <div class="svg-icon" >                        
+                                                            <svg class="svg-icon  mr-2" width="15" height="17" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="silver" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                <path d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13"></path>
+                                                            
+                                                                
+                                                            </svg>
+                                                            {{task.attachments.count}}
+                                                        </div>
+                                                    </div>
+                                                    <div class="btn bg-body">
+                                                        <div class="svg-icon" >                        
+                                                            <svg class="svg-icon  mr-2" width="15" height="19" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="blue" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                <path d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 0 1-.923 1.785A5.969 5.969 0 0 0 6 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337Z"></path>
+                                                            
+                                                                
+                                                            </svg>
+                                                            {{task.comments.count}}
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="media align-items-center mt-md-0 mt-3">
-                                            <a href="#" class="btn bg-secondary-light mr-3">Design</a>
-                                            <a class="btn bg-secondary-light" data-toggle="collapse" href="#collapseEdit1" role="button" aria-expanded="false" aria-controls="collapseEdit1"><i class="ri-edit-box-line m-0"></i></a>
+                                            <a href="#" class="btn bg-purple-light mr-3">Project : {{ task.task.project.name }}</a>
+                                            <a class="btn bg-secondary-light" data-toggle="collapse" href="#collapseEdit1{{task.task.id}}" role="button" aria-expanded="false" aria-controls="collapseEdit1{{task.task.id}}"><i class="ri-edit-box-line m-0"></i></a>
                                         </div>
                                     </div>  
                                 </div>
-                            </div>                                                                                                        
-                            <div class="collapse" id="collapseEdit1">                                            
-                                <div class="card card-list task-card">
-                                    <div class="card-header d-flex align-items-center justify-content-between px-0 mx-3">
-                                        <div class="header-title">
-                                            <div class="custom-control custom-checkbox custom-control-inline">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck05">
-                                                <label class="custom-control-label h5" for="customCheck05">Mark as done</label>
-                                            </div>
-                                        </div>
-                                        <div><a href="#" class="btn bg-secondary-light">Design</a></div>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="form-group mb-3 position-relative">
-                                            <input type="text" class="form-control bg-white" placeholder="Design landing page of webkit">
-                                            <a href="#" class="task-edit task-simple-edit text-body"><i class="ri-edit-box-line"></i></a>
-                                        </div>
-                                        <div class="card mb-3">
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="col-lg-6">
-                                                        <div class="form-group mb-0">
-                                                            <label for="exampleInputText2" class="h5">Memebers</label>
-                                                            <select name="type" class="selectpicker form-control" data-style="py-0">
-                                                                <option>Memebers</option>
-                                                                <option>Kianna Septimus</option>
-                                                                <option>Jaxson Herwitz</option>
-                                                                <option>Ryan Schleifer</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-6">
-                                                        <div class="form-group mb-0">
-                                                            <label for="exampleInputText3" class="h5">Due Dates*</label>
-                                                            <input type="date" class="form-control" id="exampleInputText3" value="">
-                                                        </div>                        
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="card mb-3">
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="col-lg-6">                                                        
-                                                        <h5 class="mb-2">Description</h5>
-                                                        <p class="mb-0">Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitation veniam consequat sunt nostrud amet.</p>
-                                                    </div>
-                                                    <div class="col-lg-6">                                      
-                                                        <h5 class="mb-2">Checklist</h5>
-                                                        <div class="row">
-                                                            <div class="col-lg-6">
-                                                                <div class="custom-control custom-checkbox custom-control-inline mr-0">
-                                                                    <input type="checkbox" class="custom-control-input" id="customCheck1">
-                                                                    <label class="custom-control-label mb-1" for="customCheck1">Design mobile version</label>
-                                                                </div>
-                                                                <div class="custom-control custom-checkbox custom-control-inline mr-0">
-                                                                    <input type="checkbox" class="custom-control-input" id="customCheck02">
-                                                                    <label class="custom-control-label mb-1" for="customCheck02">Use images of unsplash.com</label>
-                                                                </div>
-                                                                <div class="custom-control custom-checkbox custom-control-inline mr-0">
-                                                                    <input type="checkbox" class="custom-control-input" id="customCheck3">
-                                                                    <label class="custom-control-label" for="customCheck3">Vector images of small size.</label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-lg-6">
-                                                                <div class="custom-control custom-checkbox custom-control-inline mr-0">
-                                                                    <input type="checkbox" class="custom-control-input" id="customCheck04">
-                                                                    <label class="custom-control-label mb-1" for="customCheck04">Design mobile version of landing page</label>
-                                                                </div>
-                                                                <div class="custom-control custom-checkbox custom-control-inline mr-0">
-                                                                    <input type="checkbox" class="custom-control-input" id="customCheck5">
-                                                                    <label class="custom-control-label mb-1" for="customCheck5">Use images of unsplash.com</label>
-                                                                </div>
-                                                                <div class="custom-control custom-checkbox custom-control-inline mr-0">
-                                                                    <input type="checkbox" class="custom-control-input" id="customCheck06">
-                                                                    <label class="custom-control-label" for="customCheck06">Vector images of small size..</label>
-                                                                </div>
-                                                            </div>
-                                                        </div>                       
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group mb-0">
-                                            <label for="exampleInputText01" class="h5">Attachments</label>
-                                            <div class="custom-file">
-                                                <input type="file" class="custom-file-input" id="inputGroupFile001">
-                                                <label class="custom-file-label" for="inputGroupFile001">Upload media</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>      
+                            </div>   
+                            {% if not  user.is_superuser %}
+                                {% include 'app/webkit/Modals/col2.html' with task=task %}
+                            {% endif %}
+                            {% if user.is_superuser %}
+                                {% include 'app/webkit/Modals/col.html' with task=task %}
+                            {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        {% empty %}
+            <h4>No Tasks added yet.</h4>
+        {% endfor %}
     </div>
+
+<script>
+    document.getElementById('task-form-{{ task.task.id }}').addEventListener('submit', function(event) {
+        console.log('Form submitted for task ID:', '{{ task.task.id }}');
+    }); 
+</script>
 {% endblock %}

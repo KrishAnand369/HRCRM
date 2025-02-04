@@ -2,7 +2,7 @@
 from django.shortcuts import render,get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import UserProfile,Project,Client,User
+from .models import UserProfile,Project,Client,User,Task,Checklist,Comment,Attachment
 from .projectForm import ProjectForm
 from datetime import datetime
 from django.contrib.auth import login, authenticate
@@ -177,16 +177,6 @@ def project_list(request):
     }
     return render(request, 'app/webkit/project/projects.html', context)
 
-@login_required
-def task_list(request):
-    profile = UserProfile.objects.get(user=request.user)
-    return render(request,"app/webkit/task/tasks.html",{'profile': profile,})
-
-
-
-
-
-
 
 def project_save(request, project_id=None):
     project = None
@@ -231,23 +221,174 @@ def project_save(request, project_id=None):
     })
 
 
+def task_register(request):
+    print("ereached")
+    if request.method == 'POST':
+    
+        # Get form data
+        project_id = request.POST.get('project')
+        title = request.POST.get('taskName')
+        print(title)
+        description = request.POST.get('description')
+        due_date = request.POST.get('due_date')
+        priority = request.POST.get("priority")
+        status = request.POST.get("status")
+        checklist_items = request.POST.get('checklist', '').split(',')
+        comments = request.POST.get('comments', '').split(',')
+        print(comments)
+        files = request.FILES.getlist('attachments')
 
+        # Get project
+        project = get_object_or_404(Project, id=project_id)
 
+        # Create task
+        task = Task(
+            project=project,
+            name=title,
+            description=description,
+            due_date=due_date,
+            priority = priority,
+            status = status
+        )
+        
 
+        # Assign users
+        assigned_to_id = request.POST.get("assignMembers")
+        if assigned_to_id:
+            task.assigned_to = get_object_or_404(UserProfile, id=assigned_to_id)
+        else:
+            task.assigned_to = None  # Unassign if no user is selected
+        task.save()
 
+        # Add checklist items
+        for item in checklist_items:
+            if item.strip():  # Ignore empty items
+                Checklist.objects.create(task=task, item=item.strip())
 
+        # Add comments
+        for comment_text in comments:
+            if comment_text.strip():  # Ignore empty comments
+                Comment.objects.create(task=task, user=request.user, text=comment_text.strip())
 
-# @login_required
-# def userprofile1(request):
-#     profile = UserProfile.objects.get(user=request.user)
-#     skills = profile.skills.all()
-#     education = profile.education.all()
+        # Handle file uploads
+        for file in files:
+            Attachment.objects.create(task=task, file=file)
 
-#     context = {
-#         'profile': profile,
-#         'skills': skills,
-#         'education': education,
-#     }
-#     return render(request,"app/webkit/user/profile.html",context)
+        return redirect('CRM:taskList')  # Redirect to task detail page
+        # except Exception as e:
+        #     # Handle errors (e.g., display an error message)
+        #     return render(request, 'error.html', {'error_message': str(e)})
+    else:
+        # Render the form page for GET requests
+        projects = Project.objects.all()
+        users = UserProfile.objects.all()
+        profile = UserProfile.objects.get(user=request.user)
+        return render(request,"app/webkit/task/tasks.html",{'profile': profile,'projects':projects,'users':users})
+        # return render(request, 'create_task.html', {'projects': projects, 'users': users})    
+        
+        
+        
+        
+        
+        
+def update_task(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+    if request.method == "POST":
+        # Update Task Details
+        task.name = request.POST.get("name")
+        task.description = request.POST.get("description")
+        task.due_date = request.POST.get("due_date")
+        task.priority = request.POST.get("priority")
+        task.status = request.POST.get("status")
+        comments = request.POST.get('comments', '').split(',')
+        files = request.FILES.getlist('attachments')
+        checklist_items = request.POST.get('checklist_edit', '').split(',')
+        
 
+        # Update Assigned User
+        assigned_to_id = request.POST.get("assigned_to")
+        if assigned_to_id:
+            task.assigned_to = get_object_or_404(UserProfile, id=assigned_to_id)
+        else:
+            task.assigned_to = None  # Unassign if no user is selected
 
+        task.save()
+
+        # Get all checklist items for this task
+        all_checklists = Checklist.objects.filter(task=task)
+
+        # Get the checklist IDs that were checked
+        checked_items = request.POST.getlist("checklist_items")
+        # Update checklist completion status
+        for checklist in all_checklists:
+            if task.status == "Completed" and len(all_checklists)== len(checked_items):
+                checklist.is_completed = True
+            else:    
+                checklist.is_completed = str(checklist.id) in checked_items
+            checklist.save()
+            
+        for comment_text in comments:
+            if comment_text.strip():  # Ignore empty comments
+                Comment.objects.create(task=task, user=request.user, text=comment_text.strip())
+                
+        for file in files:
+            Attachment.objects.create(task=task, file=file)
+            
+        for item in checklist_items:
+            if item.strip():  # Ignore empty items
+                Checklist.objects.create(task=task, item=item.strip())
+                
+                
+        #if check list filled then task completed 
+        checkedItems= task.checklists.filter(is_completed = True)      
+        if(len(Checklist.objects.filter(task=task))==len(checkedItems)):
+            task.status = "Completed"
+            print("reached completing task from check list")
+            task.save()
+        elif(len(checkedItems)==0):
+            task.status = "New"
+            print("reached completing task from check list2")
+            task.save()
+        else:
+            task.status = "In Progress"
+            print("reached completing task from check list3")
+            task.save()
+            
+        
+            
+        return redirect('CRM:taskList')  # Redirect back to task page
+    projects = Project.objects.all()
+    users = UserProfile.objects.all()
+    profile = UserProfile.objects.get(user=request.user)
+    return render(request,"app/webkit/task/tasks.html",{'profile': profile,'projects':projects,'users':users})
+
+@login_required
+def task_list(request):
+    profile = UserProfile.objects.get(user=request.user)
+    projects =Project.objects.all()
+    users = UserProfile.objects.all()
+    project_selected=request.GET.get('project_selected')
+    #print("project_selected:"+project_selected)
+    print(project_selected)
+    if project_selected == "All Tasks" or not project_selected:
+        # If 'All projects' is selected or no status is provided
+        print("project_selected: reached")
+        tasks = Task.objects.all()
+    elif project_selected:  # If a specific status is selected
+        tasks = Task.objects.filter(project=project_selected)
+    
+    taskList= []
+    for task in tasks:
+        
+        checklists=task.checklists.all()
+        comments=task.comments.all()
+        attachments=task.attachments.all()
+        completed_items=task.checklists.filter(is_completed = True).count()
+        taskList.append({
+        'task':task,
+        'checklists':checklists,
+        'comments':comments,
+        'attachments':attachments,
+        'completed_items':completed_items,
+        })
+    return render(request,"app/webkit/task/tasks.html",{'profile': profile,'projects':projects,'users':users,'tasks':taskList})
