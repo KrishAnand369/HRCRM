@@ -76,3 +76,19 @@ class Task(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.project.name}"
+    
+class Checklist(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='checklists')
+    item = models.CharField(max_length=255)
+    is_completed = models.BooleanField(default=False)
+
+class Comment(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Attachment(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='attachments')
+    file = models.FileField(upload_to='task_attachments/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)

@@ -1,0 +1,92 @@
+<div class="modal fade" role="dialog" aria-modal="true" id="new-project-modal">
+    <div class="modal-dialog  modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header d-block text-center pb-3 border-bttom">
+                <h3 class="modal-title" id="exampleModalCenterTitle01">New Project</h3>
+            </div>
+            <form method="POST" action="{% url 'CRM:new_project' %}">
+                {% csrf_token %} 
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group mb-3">
+                                <label for="projectName" class="h5">Project Name*</label>
+                                <input type="text" class="form-control" id="projectName" name="projectName" placeholder="Project Name">
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group mb-3">
+                                <label for="description" class="h5">Description*</label>
+                                <input type="textarea" class="form-control" id="description" name="description" placeholder="Project description">
+                            </div>
+                        </div>
+                        {% comment %} <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <label for="exampleInputText2" class="h5">Categories *</label>
+                                <select name="type" class="selectpicker form-control" data-style="py-0">
+                                    <option>Category</option>
+                                    <option>Android</option>
+                                    <option>IOS</option>
+                                    <option>Ui/Ux Design</option>
+                                    <option>Development</option>
+                                </select>
+                            </div>
+                        </div> {% endcomment %}
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <label for="dueDate" class="h5">Due Dates*</label>
+                                <input type="date" class="form-control" id="dueDate" name="dueDate" value="">
+                            </div>                        
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <label for="exampleInputText2" class="h5">Priority *</label>
+                                <select name="priority" class="selectpicker form-control" data-style="py-0">
+                                    <option>High</option>
+                                    <option>Medium</option>
+                                    <option>Low</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <label for="exampleInputText2" class="h5">Client *</label>
+                                <select name="client" class="selectpicker form-control" data-style="py-0">
+                                    <option>BCCI</option>
+                                    <option>IPL</option>
+                                    <option>ICC</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <label for="exampleInputText2" class="h5">Status *</label>
+                                <select name="status" class="selectpicker form-control" data-style="py-0" placeholder="select status">
+                                    <option>New</option>
+                                    <option>In Progress</option>
+                                    <option>Completed</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group mb-3">
+                                <label for="assignMembers" class="h5">Assign Members*</label>
+                                <select name="assignMembers" id="assignMembers" class="selectpicker form-control" multiple data-style="py-0">
+                                    {% for user in users %}
+                                        <option value="{{ user.id }}">{{ user.user.username }}</option>
+                                    {% endfor %} 
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="d-flex flex-wrap align-items-center justify-content-center mt-2">
+                                <button type="submit" class="btn btn-primary">Save1</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel1</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> 
