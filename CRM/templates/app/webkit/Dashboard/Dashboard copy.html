@@ -1,0 +1,97 @@
+{% extends 'app/webkit/main.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="row">
+    <!-- Top Row: Personal Performance Metrics -->
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5>Tasks Completed</h5>
+                <h3>15/20</h3>
+                <div class="progress">
+                    <div class="progress-bar" style="width: 75%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5>Hours Worked</h5>
+                <h3>35/40</h3>
+                <div class="progress">
+                    <div class="progress-bar" style="width: 87.5%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5>Goals Achieved</h5>
+                <h3>3/5</h3>
+                <div class="progress">
+                    <div class="progress-bar" style="width: 60%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5>Upcoming Deadlines</h5>
+                <h3>2</h3>
+                <p class="text-danger">2 deadlines in 3 days</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Tasks Section -->
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h4>My Tasks</h4>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <h5>Task 1: Design Homepage</h5>
+                        <p>Deadline: 02/02/2024</p>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 50%;"></div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <h5>Task 2: Fix Bugs</h5>
+                        <p>Deadline: 03/02/2024</p>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 80%;"></div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calendar and Notifications -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h4>Calendar</h4>
+                <!-- Calendar widget here -->
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h4>Notifications</h4>
+                <ul class="list-group">
+                    <li class="list-group-item">New task assigned: Update FAQ Page</li>
+                    <li class="list-group-item">Team meeting at 3 PM today</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,15 +1,18 @@
 from django.urls import path
 from . import views
 from CRM.controller import authView
-from CRM.appViews import clientView,projectView,taskView
+from CRM.appViews import clientView,projectView,taskView,dashboardView,employeeView
 
 app_name ="CRM"
 urlpatterns = [
     path('', views.landing,name='landing'),
     
     path('register/', authView.register, name='register'),
+    path('adduser/', authView.createUser, name='createUser'),
     path('login/',authView.loginPage,name='loginpage'),
     path('logout/',authView.logoutPage,name='logoutpage'),
+    
+    path('dashboard',dashboardView.dashboard,name='userDashboard'),
     
     
     path('home',views.home,name='home'),
@@ -26,5 +29,9 @@ urlpatterns = [
     
     path('tasks',taskView.task_list,name='taskList'),
     path('new-task/', taskView.task_register, name='task_create'),
-     path('update-task/<int:task_id>/', taskView.update_task, name="update_task"),
+    path('update-task/<int:task_id>/', taskView.update_task, name="update_task"),
+    
+    path('staffs/',employeeView.employee_list,name='employees')
+     
+     
 ]

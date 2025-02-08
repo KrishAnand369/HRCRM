@@ -1,6 +1,7 @@
 from django.shortcuts import render,get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from CRM.models import UserProfile,Task,Comment,Checklist,Attachment,Project
+from CRM.models import UserProfile,Task,Comment,Checklist,Attachment,Project,Client
+from CRM.controller import authView
 
 def task_register(request):
     if request.method == 'POST':
@@ -148,7 +149,7 @@ def update_task(request, task_id):
 
 @login_required
 def task_list(request):
-    profile = UserProfile.objects.get(user=request.user)
+    userRole = authView.get_user_role(request.user)
     projects =Project.objects.all()
     users = UserProfile.objects.all()
     project_selected=request.GET.get('project_selected')
@@ -156,8 +157,15 @@ def task_list(request):
         tasks = Task.objects.all()
     elif project_selected:  # If a specific status is selected
         tasks = Task.objects.filter(project=project_selected)
-    if not request.user.is_superuser:
-        tasks = tasks.filter(assigned_to=profile)
+    if userRole == 'client':
+        profile = Client.objects.get(user=request.user)
+        projects = projects.filter(client=profile)
+        tasks =Task.objects.filter(project__client=profile)
+    else:
+        profile = UserProfile.objects.get(user=request.user)
+        if not request.user.is_superuser:
+            tasks = tasks.filter(assigned_to=profile)
+            projects = projects.filter(assigned_users=profile)
     taskList= []
     for task in tasks:
         
@@ -172,4 +180,4 @@ def task_list(request):
         'attachments':attachments,
         'completed_items':completed_items,
         })
-    return render(request,"app/webkit/task/tasks.html",{'profile': profile,'projects':projects,'users':users,'tasks':taskList})
+    return render(request,"app/webkit/task/tasks.html",{'userRole':userRole,'profile': profile,'projects':projects,'users':users,'tasks':taskList})

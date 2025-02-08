@@ -40,7 +40,7 @@ class Education(models.Model):
 # Team Model
 class Team(models.Model):
     name = models.CharField(max_length=100)
-    members = models.ManyToManyField(UserProfile, related_name="teams")
+    members = models.ManyToManyField(UserProfile, related_name="team")
     leader = models.ForeignKey(UserProfile, related_name="led_teams", on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
