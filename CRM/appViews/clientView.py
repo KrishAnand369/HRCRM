@@ -2,6 +2,7 @@ from django.shortcuts import render,get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from CRM.models import UserProfile,Client,User
+from CRM.controller import authView
 
 def client_register(request, client_id=None):
     if request.method == 'POST':
@@ -49,7 +50,8 @@ def client_register(request, client_id=None):
 
 @login_required
 def client_list(request):
+    userRole = authView.get_user_role(request.user) 
     clients = Client.objects.all()
     profile = UserProfile.objects.get(user=request.user)
-    return render(request, 'app/webkit/client/clientlist.html',{'profile': profile, 'clients': clients })  
+    return render(request, 'app/webkit/client/clientlist.html',{'userRole':userRole,'profile': profile, 'clients': clients })  
 

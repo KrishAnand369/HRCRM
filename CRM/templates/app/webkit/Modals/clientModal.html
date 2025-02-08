@@ -41,6 +41,8 @@
                                 <label for="clientLogo" class="h5">Client Logo</label>
                                 <input type="file" name="client_logo" id="clientLogo" class="form-control">
                                 {% if client and client.client_logo %}
+                                    {% comment %} <a href="{{ client.client_logo.url }}" target="_blank">{{ client.client_logo.name }}</a>
+                                    <small>(Uploaded on: {{ client.client_logo.uploaded_at }})</small> {% endcomment %}
                                     <img src="{{ client.client_logo.url }}" alt="Client Logo" class="img-thumbnail mt-2" width="100">
                                 {% endif %}
                             </div>

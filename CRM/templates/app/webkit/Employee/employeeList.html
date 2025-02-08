@@ -1,0 +1,137 @@
+{% extends 'app/webkit/main.html' %}
+{% load static %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex flex-wrap align-items-center justify-content-between breadcrumb-content">
+                    <h5>Our Team</h5>
+                    <div class="d-flex align-items-center">                                
+                        <div class="list-grid-toggle d-flex align-items-center mr-3">
+                            <div data-toggle-extra="tab" data-target-extra="#grid" class="active">
+                                <div class="grid-icon mr-3">
+                                    <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div data-toggle-extra="tab" data-target-extra="#list">
+                                <div class="grid-icon">
+                                    <svg  width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="21" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="3" y2="18"></line>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        {% if user.is_superuser %}
+                        <div class="pl-3 border-left btn-new">
+                             <button class="btn btn-primary" data-toggle="modal" data-target="#new-user-modal">New Employee</button>
+                             {% include 'app/webkit/Modals/userModal.html' with client=None %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="grid" class="item-content animate__animated animate__fadeIn active" data-toggle-extra="tab-content">
+    <div class="row">
+
+
+        <!-- for loop start -->
+        {% for employee in employees %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card-transparent card-block card-stretch card-height">
+                <div class="card-body text-center p-0">                            
+                    <div class="item">
+                        <div class="odr-img">
+                            {% if employee.profile_pic  %}
+                            <img src="{{ employee.profile_pic.url }}" class="img-fluid rounded-circle avatar-90 m-auto" alt="bv">
+                            {% else %}
+                            <img src="{% static 'html/assets/images/user/2.jpg' %}" class="img-fluid rounded-circle avatar-90 m-auto" alt="bv">
+                            {% endif %}
+                        </div>                        
+                        <div class="odr-content rounded">                                          
+                            <h4 class="mb-2">{{ employee.user.username }}</h4>
+                            <p class="mb-3">{{ employee.user.email }}</p>
+                            <ul class="list-unstyled mb-3">
+                                <li class="bg-secondary-light rounded-circle iq-card-icon-small mr-4"><i class="ri-mail-open-line m-0"></i></li>
+                                <li class="bg-primary-light rounded-circle iq-card-icon-small mr-4"><i class="ri-chat-3-line m-0"></i></li>
+                                {% comment %} <li class="bg-success-light rounded-circle iq-card-icon-small"><i class="ri-phone-line m-0"></i></li> {% endcomment %}
+                            </ul>                                    
+                            <div class="pt-3 border-top">
+                                <a href="#" class="btn btn-primary">More</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+            <h4>No Employees added yet.</h4>
+        {% endfor %}
+        <!-- for loop end -->
+    </div>
+    </div>
+    <div id="list" class="item-content animate__animated animate__fadeIn" data-toggle-extra="tab-content">
+        <div class="table-responsive rounded bg-white mb-4">
+            <table class="table mb-0 table-borderless tbl-server-info">
+                <tbody>
+                    {% for employee in employees %}
+                    <tr>
+                        <td>
+                            <div class="media align-items-center">
+                                {% if employee.profile_pic  %}
+                                <img src="{{ employee.profile_pic.url }}" class="img-fluid rounded-circle avatar-40" alt="image">
+                                {% else %}
+                                <img src="{% static 'html/assets/images/user/2.jpg' %}" class="img-fluid rounded-circle avatar-40" alt="image">
+                                {% endif %}
+                                <h5 class="ml-3">{{employee.user.username}}</h5>
+                            </div>
+                        </td>
+                        <td>{{ employee.user.email }}</td>
+                        <td>
+                            <div class="media align-items-center">
+                                <div class="bg-secondary-light rounded-circle iq-card-icon-small mr-3"><i class="ri-mail-open-line m-0"></i></div>
+                                <div class="bg-primary-light rounded-circle iq-card-icon-small mr-3"><i class="ri-chat-3-line m-0"></i></div>
+                                <div class="bg-success-light rounded-circle iq-card-icon-small"><i class="ri-phone-line m-0"></i></div>
+                            </div>
+                        </td>
+                        <td>
+                            <a href="#" class="btn btn-primary">Message</a>
+                        </td>
+                        {% if user.is_superuser %}
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="las la-pen mr-3"  data-target="#new-user-modal" data-toggle="modal"></i>
+                                {% include 'app/webkit/Modals/userModal.html' with client=client %}
+
+                                
+                                <a href="#" class="text-body"><i class="las la-trash-alt mr-0"></i></a>
+                            </div>
+                        </td>
+                        {% endif %}
+                    </tr> 
+                    
+                    {% empty %}
+                        <h4>No Employees added yet.</h4>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>    
+</div>
+{% comment %} <script>
+    $(document).on('click', '[data-toggle="modal"]', function () {
+        var clientId = $(this).data('client-id');
+        $('#edit-client-modal-' + clientId).modal({ show: true, backdrop: 'static' });
+    });
+
+    $(document).on('click', '.la-pen', function() {
+        var clientId = $(this).data('client-id');
+        $('#edit-client-modal-' + clientId).modal({ show: true, backdrop: 'static' });
+    });
+</script> {% endcomment %}
+{% endblock %}

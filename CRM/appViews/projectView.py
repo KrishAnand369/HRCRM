@@ -2,11 +2,12 @@ from django.shortcuts import render,get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from CRM.models import UserProfile,Client,Project
+from CRM.controller import authView
 
 
 @login_required
 def project_list(request):
-    profile = UserProfile.objects.get(user=request.user)
+    
     status = request.GET.get('status')  # Get the selected status
     users = UserProfile.objects.all()
     clients = Client.objects.all()  # Fetch all clients
@@ -14,8 +15,14 @@ def project_list(request):
         projects = Project.objects.all()
     elif status:  # If a specific status is selected
         projects = Project.objects.filter(status=status)
-    if not request.user.is_superuser:
-        projects = projects.filter(assigned_users=profile)
+    userRole = authView.get_user_role(request.user)
+    if userRole =='client':
+        profile = Client.objects.get(user=request.user)
+        projects = projects.filter(client=profile)
+    else:
+        profile = UserProfile.objects.get(user=request.user)
+        if not request.user.is_superuser:
+            projects = projects.filter(assigned_users=profile)
         
     projects_with_completion = []
     for project in projects:
@@ -29,6 +36,7 @@ def project_list(request):
         })
 
     context = {
+        'userRole':userRole,
         'projects': projects_with_completion,
         'status': status,
         'users': users,

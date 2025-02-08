@@ -13,8 +13,9 @@ def landing(request):
 
 @login_required
 def home(request):
-    profile = UserProfile.objects.get(user=request.user)
-    return render(request,"app/webkit/main.html",{'profile': profile,})
+    # //profile = UserProfile.objects.get(user=request.user)
+    # {'profile': profile,}
+    return render(request,"app/webkit/main.html")
 
 
 
@@ -53,7 +54,8 @@ def save_profile(request):
             return render(request, 'app/webkit/user/user-edit-profile.html', {
                 'error': 'Invalid file type. Only JPEG and PNG are allowed.',
             })
-        profile.profile_pic = profile_pic
+        if profile_pic:
+            profile.profile_pic = profile_pic
         profile.save()
         
         # Saving skills (only add new skills)
