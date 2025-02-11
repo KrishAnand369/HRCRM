@@ -11,8 +11,8 @@ def createUser(request):
         password = request.POST.get('password')
         role = request.POST.get('role')
         user = User.objects.create_user(username=username, email=email, password=password)
-        print("hai143654")
         UserProfile.objects.create(user=user,role = role )
+        messages.success(request,'New User Registered Successfuly!')
     return redirect('CRM:employees')
 
 def register(request):
@@ -29,7 +29,7 @@ def register(request):
             print(form.errors)
     context = {'form':form}
 
-    return render(request,'registration.html',context)
+    return render(request,'app/webkit/registration.html',context)
 
 def loginPage(request):
     if request.method == 'POST':
@@ -53,7 +53,8 @@ def loginPage(request):
         else:
             messages.error(request,"Invalid username or password")
             return redirect('/login')
-    return render(request,'SignIn.html')
+    return render(request,'app/webkit/signIn.html')
+    #return render(request,'SignIn.html')
 
 def signin(request):
     if request.method == 'POST':

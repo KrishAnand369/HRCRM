@@ -32894,3 +32894,19 @@ ul.iq-contact-rest li a p {
 .data-table .badge {
   padding: 8px 10px;
 }
+
+.alertify-notifier .ajs-success {
+  background-color: #4CAF50; /* Green color */
+  color: white; /* Text color */
+}
+
+/* If you want to change other alert types (e.g., error, warning) */
+.alertify-notifier .ajs-error {
+  background-color: #f44336; /* Red color */
+  color: white;
+}
+
+.alertify-notifier .ajs-warning {
+  background-color: #ff9800; /* Orange color */
+  color: white;
+}

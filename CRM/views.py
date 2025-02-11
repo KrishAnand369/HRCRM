@@ -8,7 +8,7 @@ from datetime import datetime
 from django.contrib.auth import login, authenticate
 
 def landing(request):
-    return render(request,"index.html")
+    return render(request,"app/webkit/index.html")
 
 
 @login_required

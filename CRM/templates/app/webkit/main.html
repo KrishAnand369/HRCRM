@@ -5,18 +5,28 @@
   <head>
     <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-      <title>Webkit | Responsive Bootstrap 4 Admin Dashboard Template</title>
+      <title>TeamSync</title>
       
-      <!-- Favicon -->
-      <link rel="shortcut icon" href="{% static 'webkit/assets/images/favicon.ico' %}" />
-      <link rel="stylesheet" href="{% static 'webkit/assets/css/backend-plugin.min.css' %}">
-      <link rel="stylesheet" href="{% static 'webkit/assets/css/backend.css' %}">
-      <link rel="stylesheet" href="{% static 'webkit/assets/vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css' %}">
-      <link rel="stylesheet" href="{% static 'webkit/assets/vendor/remixicon/fonts/remixicon.css' %}">
-      
-      <link rel="stylesheet" href="{% static 'webkit/assets/vendor/tui-calendar/tui-calendar/dist/tui-calendar.css' %}">
-      <link rel="stylesheet" href="{% static 'webkit/assets/vendor/tui-calendar/tui-date-picker/dist/tui-date-picker.css' %}">
-      <link rel="stylesheet" href="{% static 'webkit/assets/vendor/tui-calendar/tui-time-picker/dist/tui-time-picker.css' %}">  </head>
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{% static 'webkit/assets/images/favicon.ico' %}" />
+    <link rel="stylesheet" href="{% static 'webkit/assets/css/backend-plugin.min.css' %}">
+    <link rel="stylesheet" href="{% static 'webkit/assets/css/backend.css' %}">
+    <link rel="stylesheet" href="{% static 'webkit/assets/vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'webkit/assets/vendor/remixicon/fonts/remixicon.css' %}">
+    
+    <link rel="stylesheet" href="{% static 'webkit/assets/vendor/tui-calendar/tui-calendar/dist/tui-calendar.css' %}">
+    <link rel="stylesheet" href="{% static 'webkit/assets/vendor/tui-calendar/tui-date-picker/dist/tui-date-picker.css' %}">
+    <link rel="stylesheet" href="{% static 'webkit/assets/vendor/tui-calendar/tui-time-picker/dist/tui-time-picker.css' %}">
+
+    {% comment %} Alertify JS {% endcomment %}
+    <!-- CSS -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/alertify.min.css"/>
+    <!-- Default theme -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/themes/default.min.css"/>
+    <!-- Sweet Alert CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/sweetalert/dist/sweetalert.css"></link>
+
+    </head>
       <body class=" color-light ">
         <!-- loader Start -->
         <div id="loading">
@@ -817,5 +827,22 @@
     <script src="{% static 'webkit/assets/js/app.js' %}"></script>
     
     <script src="{% static 'webkit/assets/vendor/moment.min.js' %}"></script>
+
+    <!--             Sweet Alert jhvcsajh              -->
+
+    {% comment %} Alertyfy JS {% endcomment %}
+    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/alertify.min.js"></script>
+    <script>
+        alertify.set('notifier','position', 'top-center');
+
+        {% for msg in messages %}
+
+        alertify.success("{{ msg }}");
+        {% endfor %}
+    </script>
+    <!-- Sweet Alert JS -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   </body>
 </html>
