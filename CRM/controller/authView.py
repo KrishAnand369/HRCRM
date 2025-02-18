@@ -40,7 +40,6 @@ def loginPage(request):
         if user is not None:
             if hasattr(user, 'client_profile'):
                 userRole='client'# Check if the user is a client
-                print("hellow 234")
                 login(request, user)
                 messages.success(request, "Client signed in successfully!")
                 return redirect('/dashboard')  # Redirect to client dashboard

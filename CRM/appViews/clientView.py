@@ -1,7 +1,7 @@
 from django.shortcuts import render,get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from CRM.models import UserProfile,Client,User
+from CRM.models import UserProfile,Client,User,Project
 from CRM.controller import authView
 
 def client_register(request, client_id=None):
@@ -51,7 +51,10 @@ def client_register(request, client_id=None):
 @login_required
 def client_list(request):
     userRole = authView.get_user_role(request.user) 
-    clients = Client.objects.all()
     profile = UserProfile.objects.get(user=request.user)
+    clients = Client.objects.all()
+    if not request.user.is_superuser:
+        projects_with_user = Project.objects.filter(assigned_users=profile)
+        clients = Client.objects.filter(projects__in=projects_with_user).distinct()
     return render(request, 'app/webkit/client/clientlist.html',{'userRole':userRole,'profile': profile, 'clients': clients })  
 
