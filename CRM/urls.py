@@ -13,6 +13,8 @@ urlpatterns = [
     path('logout/',authView.logoutPage,name='logoutpage'),
     
     path('dashboard',dashboardView.dashboard,name='userDashboard'),
+    path('clock-in/', dashboardView.clock_in, name='clock_in'),
+    path('clock-out/', dashboardView.clock_out, name='clock_out'),
     
     
     path('home',views.home,name='home'),

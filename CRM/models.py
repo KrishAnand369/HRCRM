@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 import datetime
+from datetime import timedelta, date,time
 import os
+from django.utils import timezone
 
 
 def get_file_path (request,filename):
@@ -23,6 +25,77 @@ class UserProfile(models.Model):
     phone = models.CharField(max_length=15, blank=False, null=False)
     country = models.CharField(max_length=15, blank=False, null=False)
     about = models.TextField()
+
+    def __str__(self):
+        return self.user.username
+
+    def is_clocked_in(self):
+        """
+        Check if the user is currently clocked in.
+        """
+        last_event = self.clock_events.order_by('-timestamp').first()
+        return last_event is not None and last_event.event_type == 'IN'
+
+    def daily_hours_worked(self):
+        """
+        Calculate the total hours the user worked on a specific date.
+        """
+        date = timezone.now().date()
+        
+        events = self.clock_events.filter(date=date).order_by('timestamp')
+
+        total_time = timedelta()
+        clock_in_time = None
+
+        for event in events:
+            if event.event_type == 'IN':
+                clock_in_time = event.timestamp
+            elif event.event_type == 'OUT' and clock_in_time is not None:
+                total_time += event.timestamp - clock_in_time
+                clock_in_time = None  # Reset for the next pair
+
+        # Handle incomplete clock-out (e.g., user forgot to clock out)
+        if clock_in_time is not None:
+            current_time = timezone.now()
+            # Assume the user clocked out at the end of the workday (e.g., 5:00 PM)
+            end_of_day = timezone.make_aware(timezone.datetime.combine(current_time.date(), time(20, 0)))  # 5:00 PM
+            if current_time < end_of_day:
+                end_of_day_naive = timezone.datetime.combine(date, timezone.datetime.min.time()) + timedelta(hours=12)
+                end_of_day = timezone.make_aware(end_of_day_naive)
+            # If current time is before 5:00 PM, calculate time up to the current time
+                total_time += current_time - clock_in_time
+            else:
+                total_time += end_of_day - clock_in_time
+
+        # Convert total_time to hours and minutes
+        total_seconds = int(total_time.total_seconds())
+        return total_seconds
+        # hours = total_seconds // 3600
+        # minutes = (total_seconds % 3600) // 60
+
+        # # Format the time as "HH hrs: MM minutes"
+        # return f"{hours:02d} hrs: {minutes:02d} minutes"
+
+    def weekly_hours_worked(self):
+        """
+        Calculate the total hours the user worked in the current week (Monday to Friday).
+        Also returns a daily breakdown of hours worked.
+        """
+        today = timezone.now().date()
+        start_of_week = today - timedelta(days=today.weekday())  # Monday of the current week
+        end_of_week = start_of_week + timedelta(days=4)  # Friday of the current week
+
+        daily_hours = {}
+        total_weekly_hours = 0
+
+        for day in range(5):  # Monday to Friday
+            current_day = start_of_week + timedelta(days=day)
+            hours_worked = self.daily_hours_worked(current_day)
+            daily_hours[current_day] = hours_worked
+            total_weekly_hours += hours_worked
+
+        return round(total_weekly_hours, 2)
+        
 
 class Skill(models.Model):
     profile = models.ForeignKey(UserProfile, related_name='skills', on_delete=models.CASCADE)
@@ -92,3 +165,15 @@ class Attachment(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='attachments')
     file = models.FileField(upload_to='task_attachments/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
+
+class ClockEvent(models.Model):
+    profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='clock_events')
+    event_type = models.CharField(max_length=10, choices=[('IN', 'Clock In'), ('OUT', 'Clock Out')])
+    timestamp = models.DateTimeField(default=timezone.now)  # Time of the event
+    date = models.DateField(default=timezone.now)  # Date of the event
+
+    def __str__(self):
+        return f"{self.profile.user.username} - {self.event_type} - {self.timestamp}"
+
+    class Meta:
+        ordering = ['timestamp']  # Ensure events are ordered by time

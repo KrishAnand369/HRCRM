@@ -32910,3 +32910,34 @@ ul.iq-contact-rest li a p {
   background-color: #ff9800; /* Orange color */
   color: white;
 }
+
+.profile-pic-container {
+  display: inline-block;
+  position: relative;
+  padding: 5px; /* Space for the outer circle */
+  border-radius: 50%; /* Make the container circular */
+}
+
+.profile-pic-container.clocked-in {
+  border: 4px solid #0FFF50; /* Green border for clocked-in */
+}
+
+.profile-pic-container.clocked-out {
+  border: 4px solid red; /* Red border for clocked-out */
+}
+.profile-pic-container.admin {
+  border: 4px solid #FFC300; /* Red border for clocked-out */
+}
+
+.profile-pic-container img {
+  display: block;
+  border-radius: 50%; /* Ensure the image is circular */
+}
+
+.status-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-left: 8px;
+}

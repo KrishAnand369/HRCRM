@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header  text-center pb-3 border-bottom">
-                <h3 class="modal-title">{% if project %}Edit Project{% else %}New Project test{% endif %}</h3>
+                <h3 class="modal-title">{% if project %}Edit Project{% else %}New Project{% endif %}</h3>
                 {% if project %}
                 {% else %}
                 <a href="#" class="svg-icon" data-dismiss="modal">                        
@@ -70,7 +70,10 @@
                                 <label for="assignMembers" class="h5">Assign Members*</label>
                                 <select name="assignMembers" id="assignMembers" class="form-control" multiple>
                                     {% for user in users %}
-                                        <option value="{{ user.id }}" {% if user in project.assigned_users.all %}selected{% endif %}>{{ user.user.username }}</option>
+                                        <option class = "mt-1" value="{{ user.id }}" {% if user in project.assigned_users.all %}selected{% endif %}
+                                            style="{% if user.user.profile.is_clocked_in %}color: #0FFF50;{% endif %}">
+                                                {{ user.user.username }}
+                                        </option>
                                     {% endfor %}
                                 </select>
                             </div>

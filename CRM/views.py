@@ -3,6 +3,7 @@ from django.shortcuts import render,get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import UserProfile,Project,Client,User,Task,Checklist,Comment,Attachment
+from CRM.controller import authView
 from .projectForm import ProjectForm
 from datetime import datetime
 from django.contrib.auth import login, authenticate
@@ -22,11 +23,13 @@ def home(request):
 
 @login_required
 def userprofile(request):
+    userRole = authView.get_user_role(request.user)
     profile = UserProfile.objects.get(user=request.user)
     skills = profile.skills.all()
     education = profile.education.all()
 
     context = {
+        'userRole':userRole,
         'profile': profile,
         'skills': skills,
         'education': education,
