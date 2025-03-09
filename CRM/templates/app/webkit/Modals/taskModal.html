@@ -30,7 +30,10 @@
                                 <label for="assignMembers" class="h5">Assigned to</label>
                                 <select name="assignMembers" id="assignMembers" class="selectpicker form-control" multiple data-style="py-0">
                                     {% for user in users %}
-                                        <option value="{{ user.id }}">{{ user.user.username }}</option>
+                                        <option class = "mt-1" value="{{ user.id }}" style="{% if user.user.profile.is_clocked_in %}color: #0FFF50;{% endif %}">
+                                            {{ user.user.username }}
+                                        </option>
+                                        
                                     {% endfor %}
                                 </select>
                             </div>

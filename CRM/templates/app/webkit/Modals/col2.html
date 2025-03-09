@@ -37,7 +37,10 @@
                                     <select name="assigned_to" class="form-control" disabled>
                                         <option value="">Select a Member</option>
                                         {% for user in users %}
-                                            <option value="{{ user.id }}" {% if task.task.assigned_to.id == user.id %}selected{% endif %}>{{ user.user.username }}</option>
+                                            <option value="{{ user.id }}" {% if task.task.assigned_to.id == user.id %}selected{% endif %}
+                                                style="{% if user.user.profile.is_clocked_in %}color: #0FFF50;{% endif %}">
+                                                    {{ user.user.username }}
+                                            </option>
                                         {% endfor %}
                                     </select>
                                 </div>

@@ -21,13 +21,37 @@
                 <div class="iq-progress-bar bg-warning-light mt-2">
                     <span class="bg-warning iq-progress progress-1" data-percent="35"></span>
                 </div>{% endcomment %}
+                <div class = "mt-2" style="display: flex; justify-content: space-between;">
+                    <!-- Left Side -->
+                    <div style="flex: 1; margin-right: 20px;">
+                        {% if request.user.profile.is_clocked_in %}
+                            <p>You are currently clocked in.</p>
+                            <form action="{% url 'CRM:clock_out' %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Clock Out</button>
+                            </form>
+                        {% else %}
+                            <p>You are currently clocked out.</p>
+                            <form action="{% url 'CRM:clock_in' %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success">Clock In</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                
+                    <!-- Right Side -->
+                    <div style="flex: 1; margin-left: 20px;">
+                        <p>Total Clocked in time today:</p>
+                        <div id="clock" style="font-size: 24px; font-weight: bold; color: #007BFF;">00:00:00</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     <div class="col-md-6 col-lg-3">
         <div class="card card-block card-stretch card-height">
-            <div class="card-body">
-                <div class="top-block d-flex align-items-center justify-content-between">
+            <div class="card-body mt-4">
+                <div class="top-block d-flex align-items-center justify-content-between ">
                     <h5>Total Projects</h5>
                     {% comment %} <span class="badge badge-warning">Anual</span> {% endcomment %}
                 </div>
@@ -44,7 +68,7 @@
     </div>
     <div class="col-md-6 col-lg-3">
         <div class="card card-block card-stretch card-height">
-            <div class="card-body">
+            <div class="card-body mt-4">
                 <div class="top-block d-flex align-items-center justify-content-between">
                     <h5>Total Tasks</h5>
                     {% comment %} <span class="badge badge-success">Today</span> {% endcomment %}
@@ -216,4 +240,30 @@
         </div>
     </div>
 </div>
+
+<script>
+    // JavaScript for the real-time clock
+    let totalSeconds = {{ daily_hours }};  
+    
+    // Total time from the back-end
+    let isClockedIn = {{ is_clocked_in|lower }};  // Whether the user is clocked in
+
+    function formatTime(seconds) {
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const secs = seconds % 60;
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    function updateClock() {
+        if (isClockedIn)
+         {
+            totalSeconds += 1;  // Increment the clock by 1 second
+            document.getElementById('clock').textContent = formatTime(totalSeconds);
+        }
+    }
+
+    // Start the clock
+    setInterval(updateClock, 1000);  // Update the clock every second
+</script>
 {% endblock %}

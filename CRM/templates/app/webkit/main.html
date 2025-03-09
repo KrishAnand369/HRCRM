@@ -708,13 +708,13 @@
                                             {% if profile.company_logo %}
                                             <img src="{{ profile.company_logo.url }}" class="img-fluid rounded-circle" alt="client">
                                             {% else %}
-                                            <img src="{% static 'html/assets/images/user/user-1.jpg.jpg' %}" class="img-fluid rounded-circle" alt="Client">
+                                            <img src="{% static 'webkit/assets/images/user/user-1.jpg' %}" class="img-fluid rounded-circle" alt="Client">
                                             {% endif %}
                                         {% elif userRole == 'user'   %}
                                             {% if profile.profile_pic %}
                                             <img src="{{ request.profile_pic_url }}" class="img-fluid rounded-circle" alt="user">
                                             {% else %}
-                                            <img src="{% static 'html/assets/images/user/2.jpg' %}" class="img-fluid rounded-circle" alt="user">
+                                            <img src="{% static 'webkit/assets/images/user/02.jpg' %}" class="img-fluid rounded-circle" alt="user">
                                             {% endif %}
                                         {% endif %}
                                         <div class="caption ml-3">
