@@ -14,6 +14,6 @@ def employee_list(request):
         employees= UserProfile.objects.all()
         # if not request.user.is_superuser:
         #     employees=none
-    for employee in employees:
-        employee.is_clocked_in = employee.is_clocked_in()  # Call the method to check clock-in status
+        for employee in employees:
+            employee.is_clocked_in = employee.is_clocked_in()  # Call the method to check clock-in status
     return render(request, 'app/webkit/Employee/employeeList.html',{'userRole':userRole,'profile': profile, 'employees': employees })  

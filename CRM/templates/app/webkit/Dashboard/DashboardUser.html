@@ -259,9 +259,10 @@
         if (isClockedIn)
          {
             totalSeconds += 1;  // Increment the clock by 1 second
-            document.getElementById('clock').textContent = formatTime(totalSeconds);
         }
+        document.getElementById('clock').textContent = formatTime(totalSeconds);
     }
+    
 
     // Start the clock
     setInterval(updateClock, 1000);  // Update the clock every second

@@ -2,7 +2,8 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from CRM.signupForm import UserRegistrationForm
 from django.contrib.auth import authenticate,login,logout
-from CRM.models import User,UserProfile
+from CRM.models import User,UserProfile,ClockEvent
+from django.utils import timezone
 
 def createUser(request):
     if request.method == 'POST':
@@ -33,6 +34,14 @@ def register(request):
 
 def loginPage(request):
     if request.method == 'POST':
+        # clock-out all the employees at midnight
+        employees= UserProfile.objects.all()
+        for employee in employees:
+            employee.is_clocked_in = employee.is_clocked_in()  # Call the method to check clock-in status
+            if(employee.is_clocked_in):
+                now = timezone.now()
+                if now.hour >= 12:ClockEvent.objects.create(profile=employee.user.profile, event_type='OUT')
+                
         name=request.POST.get('username')
         password=request.POST.get('password')
         user = authenticate(request,username=name,password =password)
