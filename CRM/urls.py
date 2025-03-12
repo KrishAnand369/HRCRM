@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from CRM.controller import authView
-from CRM.appViews import clientView,projectView,taskView,dashboardView,employeeView
+from CRM.appViews import clientView,projectView,taskView,dashboardView,employeeView,leaveView
 
 app_name ="CRM"
 urlpatterns = [
@@ -33,7 +33,14 @@ urlpatterns = [
     path('new-task/', taskView.task_register, name='task_create'),
     path('update-task/<int:task_id>/', taskView.update_task, name="update_task"),
     
-    path('staffs/',employeeView.employee_list,name='employees')
+    path('staffs/',employeeView.employee_list,name='employees'),
+    
+    path('apply_leave/',leaveView.apply_leave,name='apply_leave'),
+    path('leave_applications/',leaveView.apply_leave_list,name='apply_leave_list'),
+    path('my_applications/',leaveView.my_applications,name='my_applications'),
+    path('approve-leave/<int:leave_id>/', leaveView.approve_leave, name='approve_leave'),
+    path('decline-leave/<int:leave_id>/', leaveView.decline_leave, name='decline_leave'),
+    path('aadmin-commend-leave/<int:leave_id>/', leaveView.save_commend_leave, name='make_commend_leave'),
      
      
 ]

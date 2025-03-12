@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from CRM.models import Client,Project,UserProfile,Task,Checklist,Comment,Attachment,ClockEvent
+from CRM.models import Client,Project,UserProfile,Task,Checklist,Comment,Attachment,ClockEvent,LeaveApplication
 # Register your models here.
 admin.site.register(Client)
 admin.site.register(Project)
@@ -10,5 +10,6 @@ admin.site.register(Checklist)
 admin.site.register(Comment)
 admin.site.register(Attachment)
 admin.site.register(ClockEvent)
+admin.site.register(LeaveApplication)
 #admin.site.register()
 
