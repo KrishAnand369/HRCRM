@@ -119,6 +119,26 @@ class Team(models.Model):
     def __str__(self):
         return self.name
 
+    def is_leader(self, user):
+        return self.leader == user
+
+    def can_edit_team(self, user):
+        return user.is_superuser or self.is_leader(user)
+
+    def add_member(self, user, requesting_user):
+        if self.can_edit_team(requesting_user):
+            self.members.add(user)
+            return True
+        return False
+
+    def set_leader(self, user, requesting_user):
+        if self.can_edit_team(requesting_user) and user in self.members.all():
+            self.leader = user
+            self.save()
+            return True
+        return False
+
+
 
     
 

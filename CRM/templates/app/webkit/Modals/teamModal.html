@@ -1,0 +1,50 @@
+  <!-- Modal -->
+<div class="modal fade" id="createTeamModal" tabindex="-1" aria-labelledby="createTeamModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="createTeamModalLabel">Create New Team</h5>
+    </div>
+    <div class="modal-body">
+        <!-- Form inside the modal -->
+        <form method="post" action="{% url 'CRM:create_team' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="name" class="form-label">Team Name:</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="members" class="form-label">Add Members:</label>
+            <select class="form-select" id="members" name="members" multiple>
+                <option value="" >Select a leader1</option>
+              <option value="">Select a leader2</option>
+              {% comment %} {% for user in users %}
+                <option value="{{ user.id }}">{{ user.username }}</option>
+              {% endfor %} {% endcomment %}
+            </select>
+            <small class="form-text text-muted">Hold Ctrl (Windows) or Command (Mac) to select multiple members.</small>
+        </div>
+
+        <!-- Leader Selection -->
+        <div class="mb-3">
+            <label for="leader" class="form-label">Select Leader:</label>
+            <select class="form-select" id="leader" name="leader" required>
+              <option value="" selected disabled>Select a leader</option>
+              <option value="" >Select a leader1</option>
+              <option value="">Select a leader2</option>
+              {% comment %} {% for user in users %}
+                <option value="{{ user.id }}">{{ user.username }}</option>
+              {% endfor %} {% endcomment %}
+            </select>
+          </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Create Team</button>
+        </div>
+        </form>
+    </div>
+    </div>
+</div>
+</div>
