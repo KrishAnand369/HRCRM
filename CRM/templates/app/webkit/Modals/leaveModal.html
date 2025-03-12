@@ -9,7 +9,7 @@
                 {% csrf_token %}
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-lg-6">
+                        {% comment %} <div class="col-lg-6">
                             <div class="form-group mb-3">
                                 <label for="exampleInputText2" class="h5">To</label>
                                 <select name="to_adm" class="selectpicker form-control" data-style="py-0">
@@ -19,7 +19,7 @@
                                     <option>Ryan Schleifer</option>
                                 </select>
                             </div>
-                        </div>
+                        </div> {% endcomment %}
                         <div class="col-lg-6">
                             <div class="form-group mb-3">
                                 <label for="dueDate" class="h5">Date</label>
