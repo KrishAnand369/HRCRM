@@ -177,3 +177,25 @@ class ClockEvent(models.Model):
 
     class Meta:
         ordering = ['timestamp']  # Ensure events are ordered by time
+        
+class LeaveApplication(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+
+    employee = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='leave_applications')
+    reason = models.TextField()
+    date = models.DateField()
+    documents = models.FileField(upload_to='leave_documents/', blank=True, null=True)
+    notes = models.TextField(blank=True, null=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    to_admin = models.ForeignKey(UserProfile, related_name="leave_applys", on_delete=models.SET_NULL, null=True)
+    admin_comment = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.employee.user.username} - {self.date} - {self.status}"
+        

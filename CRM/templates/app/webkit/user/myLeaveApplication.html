@@ -1,0 +1,42 @@
+{% extends 'app/webkit/main.html' %}
+{% load static %}
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+       <div class="card">
+          <div class="card-header d-flex justify-content-between">
+             <div class="header-title">
+                <h4 class="card-title">My Leave Applications</h4>
+                <h4 class="card-title">{{pending_applications}}</h4>
+             </div>
+          </div>
+          <div class="card-body">
+             <div class="table-responsive">
+                <table id="user-list-table" class="table table-striped dataTable mt-4 mb-2" role="grid"
+                   aria-describedby="user-list-page-info">
+                   <thead>
+                      <tr class="ligth">
+                         <th>Reason</th>
+                         <th>Date</th>
+                         <th>Status</th>
+                         <th>Admin comment</th>
+                      </tr>
+                   </thead>
+                   <tbody>
+                      {% for application in leave_applications %}
+                      <tr>
+                        <td>{{application.reason}}</td>
+                        <td>{{application.date}}</td>
+                        <td>{{application.status}}</td>
+                        <td>{{application.admin_comment}}</td>
+                        
+                     </tr>
+                     {% endfor %}
+                   </tbody>
+                </table>
+             </div>
+          </div>
+       </div>
+    </div>
+ </div>
+ {% endblock %} 

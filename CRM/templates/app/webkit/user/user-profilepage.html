@@ -44,7 +44,36 @@
                      </div>
                      <p class="mb-0">{{ profile.country }}</p>
                   </div>
+                  {% comment %} <div class="d-flex justify-content-center">
+                     <div class="pl-3 btn-new mb-1 mr-3">
+                        <a href="#" class="btn btn-success" data-target="#leave-modal" data-toggle="modal">Apply for Leave</a>
+                        {% include 'app/webkit/Modals/leaveModal.html'%}
+                    </div>
+                  </div> {% endcomment %}
                   <div class="d-flex justify-content-center">
+                     <div class="pl-3 btn-new mb-1 mr-3">
+                         <!-- Dropdown Button -->
+                         <div class="dropdown">
+                             <button class="btn btn-success dropdown-toggle" type="button" id="leaveDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                 Leave
+                             </button>
+                             <!-- Dropdown Menu -->
+                             <div class="dropdown-menu" aria-labelledby="leaveDropdown">
+                                 <!-- Apply for Leave Option -->
+                                 <a class="dropdown-item" href="#" data-target="#leave-modal" data-toggle="modal">
+                                     Apply for Leave
+                                 </a>
+                                 <!-- My Applications Option -->
+                                 <a class="dropdown-item" href="{% url 'CRM:my_applications' %}">
+                                     My Applications
+                                 </a>
+                             </div>
+                         </div>
+                         <!-- Include the Modal -->
+                         {% include 'app/webkit/Modals/leaveModal.html' %}
+                     </div>
+                 </div>
+                  {% comment %} <div class="d-flex justify-content-center">
                      <div class="social-ic d-inline-flex rounded">                        
                         <a href="#">
                            <svg width="24" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -84,7 +113,7 @@
                               </svg>
                         </a>
                      </div>
-                  </div>
+                  </div> {% endcomment %}
                </div>
             </div>
          </div>

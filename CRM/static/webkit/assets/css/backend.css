@@ -32941,3 +32941,28 @@ ul.iq-contact-rest li a p {
   border-radius: 50%;
   margin-left: 8px;
 }
+
+.textarea-with-button {
+  position: relative; /* Required for positioning the button */
+  width: 100%; /* Ensure the container takes full width */
+}
+
+.send-button {
+  position: absolute; /* Position the button absolutely within the container */
+  right: 10px; /* Adjust the distance from the right edge */
+  bottom: 10px; /* Adjust the distance from the bottom edge */
+  border: none; /* Remove default button border */
+  background: transparent; /* Make the button background transparent */
+  padding: 0; /* Remove default padding */
+  cursor: pointer; /* Add pointer cursor for better UX */
+}
+
+.send-button i {
+  font-size: 20px; /* Adjust the icon size */
+  color: #28a745; /* Match the button color */
+}
+
+/* Optional: Add hover effect */
+.send-button:hover i {
+  color: #218838; /* Darker green on hover */
+}
