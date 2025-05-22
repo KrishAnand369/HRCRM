@@ -42,6 +42,7 @@ def userprofile(request):
 def save_profile(request):
     profile = UserProfile.objects.get(user=request.user)  # Fetch the logged-in user's profile
     
+    userRole =authView.get_user_role(request.user)
     if request.method == 'POST':
         # Fetching basic info
         about = request.POST.get('about')
@@ -96,7 +97,7 @@ def save_profile(request):
     skills = profile.skills.all()
     education = profile.education.all()
     return render(request, 'app/webkit/user/user-edit-profile.html', {
-        'profile': profile, 'skills': skills, 'education': education
+        'profile': profile, 'skills': skills, 'education': education,'userRole':userRole
     })
  
  

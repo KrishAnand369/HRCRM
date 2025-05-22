@@ -47,11 +47,11 @@
                                 {% for member in team.members.all %} 
                                     {% if member.profile_pic %}
                                         <a href="#" class="iq-media">
-                                            <img class="img-fluid avatar-40 rounded-circle" src="{{ member.profile_pic_url }}"  alt="user">
+                                            <img class="img-fluid avatar-50 rounded-circle" src="{{ member.profile_pic.url }}"  alt="Dp">
                                         </a>
                                     {% else %}
                                         <a href="#" class="iq-media">
-                                            <img class="img-fluid avatar-40 rounded-circle" src="{% static 'webkit/assets/images/user/02.jpg' %}"  alt="user">
+                                            <img class="img-fluid avatar-50 rounded-circle" src="{% static 'webkit/assets/images/user/user-1.jpg' %}"  alt="user">
                                         </a> 
                                     {% endif %}
                                 {% endfor %} 
