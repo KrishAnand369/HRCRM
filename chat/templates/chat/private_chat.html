@@ -1,0 +1,100 @@
+<!-- chat/templates/chat/private_chat.html -->
+{% extends 'app/webkit/main.html' %}
+
+{% block title %}Private Chat with {{ other_user.username }}{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+    <h2>Private Chat with {{ other_user.username }}</h2>
+    <div id="chat-log">
+        {% for message in messages %}
+            <div class="message {% if message.sender == request.user %}message-right{% else %}message-left{% endif %}">
+                <div class="message-content">
+                    <strong>{{ message.sender.username }}</strong>: {{ message.message }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="chat-input-container mt-2">
+        <input type="text" id="chat-message-input" placeholder="Type your message...">
+        <button id="chat-message-submit">Send</button>
+    </div>
+</div>
+
+
+<script>
+    const roomName = "{{ room.name }}";
+    const chatSocket = new WebSocket(
+        `ws://${window.location.host}/ws/chat/${roomName}/`
+    );
+
+    // Debugging: Log WebSocket connection status
+    chatSocket.onopen = function (e) {
+        console.log('WebSocket connection established');
+    };
+
+    chatSocket.onmessage = function (e) {
+        console.log('Message received:', e.data);  // Debugging
+        const data = JSON.parse(e.data);
+        const messageElement = document.createElement('div');
+
+        // Determine message alignment based on sender
+        if (data.sender === "{{ request.user.username }}") {
+            messageElement.className = 'message message-right';
+        } else {
+            messageElement.className = 'message message-left';
+        }
+
+        // Add message content
+        messageElement.innerHTML = `
+            <div class="message-content">
+                <strong>${data.sender}</strong>: ${data.message}
+            </div>
+        `;
+
+        // Append message to chat log
+        document.querySelector('#chat-log').appendChild(messageElement);
+
+        // Scroll to the bottom of the chat log
+        const chatLog = document.querySelector('#chat-log');
+        chatLog.scrollTop = chatLog.scrollHeight;
+    };
+
+    chatSocket.onclose = function (e) {
+        console.error('WebSocket connection closed unexpectedly');
+    };
+
+    chatSocket.onerror = function (e) {
+        console.error('WebSocket error:', e);
+    };
+
+    // Send message when the Send button is clicked
+    document.querySelector('#chat-message-submit').onclick = function (e) {
+        const messageInput = document.querySelector('#chat-message-input');
+        const message = messageInput.value;
+
+        if (message.trim() === "") {
+            console.error('Message is empty');
+            return;
+        }
+
+        if (chatSocket.readyState === WebSocket.OPEN) {
+            console.log('Sending message:', message);  // Debugging
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'sender': "{{ request.user.username }}"
+            }));
+            messageInput.value = '';
+        } else {
+            console.error('WebSocket is not open.');
+        }
+    };
+
+    // Send message when Enter key is pressed
+    document.querySelector('#chat-message-input').onkeyup = function (e) {
+        if (e.keyCode === 13) {  // Enter key
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+</script>
+{% endblock %}

@@ -33,11 +33,20 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'CRM',
+    'chat',
+    'invoices',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    
+    
+    # add django daphne
+    'daphne',
+    
+    # add django channels
+    'channels' , 
     'django.contrib.staticfiles',
 ]
 
@@ -74,6 +83,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'HRandCRM.wsgi.application'
+ASGI_APPLICATION = 'HRandCRM.asgi.application'  
 
 
 # Database
@@ -111,7 +121,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'  #  for Indian Standard Time (IST)
 
 USE_I18N = True
 
@@ -132,3 +142,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}

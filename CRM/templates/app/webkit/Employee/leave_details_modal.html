@@ -20,18 +20,6 @@
                     <p>No documents uploaded.</p>
                 {% endif %}
                 
-                {% comment %} <form action="{% url 'CRM:make_commend_leave' application.id %}" method="post" style="display: inline;" >
-                    {% csrf_token %}
-                    <div class="col-lg-12">
-                        <div class="form-group mb-3">
-                            <label for="exampleInputText40" class="h5">Comments</label>
-                            <textarea class="form-control" id="exampleInputText40" rows="2" placeholder="" name="comment"></textarea>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn bg-success" data-toggle="tooltip" data-placement="top" title="Approve">
-                        <i class="ri-check-fill mr-0"></i>
-                    </button>
-                 </form> {% endcomment %}
                  <form action="{% url 'CRM:make_commend_leave' application.id %}" method="post" style="display: inline;">
                     {% csrf_token %}
                     <div class="col-lg-12">

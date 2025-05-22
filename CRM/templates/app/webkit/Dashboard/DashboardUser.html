@@ -52,7 +52,7 @@
         <div class="card card-block card-stretch card-height">
             <div class="card-body mt-4">
                 <div class="top-block d-flex align-items-center justify-content-between ">
-                    <h5>Total Projects</h5>
+                    <a href="{% url 'CRM:project' %}"><h5>Total Projects</h5> </a>
                     {% comment %} <span class="badge badge-warning">Anual</span> {% endcomment %}
                 </div>
                 <h3><span class="counter">{{ project.total }}</span></h3>
@@ -70,7 +70,7 @@
         <div class="card card-block card-stretch card-height">
             <div class="card-body mt-4">
                 <div class="top-block d-flex align-items-center justify-content-between">
-                    <h5>Total Tasks</h5>
+                    <a href="{% url 'CRM:taskList' %}" ><h5>Total Tasks</h5></a>
                     {% comment %} <span class="badge badge-success">Today</span> {% endcomment %}
                 </div>
                 <h3><span class="counter">{{ task.total }}</span></h3>
