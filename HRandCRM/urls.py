@@ -23,6 +23,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('CRM.urls')),
+    path('chat/',include('chat.urls')),
+    path('invoice/',include('invoices.urls')),
 ]
 
 if settings.DEBUG:

@@ -14,7 +14,7 @@ def employee_list(request):
         employees = UserProfile.objects.filter(assigned_projects__in=projects).distinct() 
     else:
         profile = UserProfile.objects.get(user=request.user)
-        employees= UserProfile.objects.all()
+        employees= UserProfile.objects.all().exclude(user=request.user)
         if not request.user.is_superuser:
             # Step 1: Get all teams the employee is part of
             teams = Team.objects.filter(Q(members=profile) | Q(leader=profile))

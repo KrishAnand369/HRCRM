@@ -20,7 +20,7 @@ def dashboard(request):
         project={
             'total':projects.count,
             'projects':projects.exclude(status='Completed'),
-            'percentage':projectPercentage
+            'percentage':round(projectPercentage,2)
                 
         }
         if tasks.count()==0:
@@ -30,7 +30,7 @@ def dashboard(request):
         task={
             'total':tasks.count,
             'tasks':tasks.exclude(status='Completed'),
-            'percentage':taskPercentage
+            'percentage':round(taskPercentage,2)
         }
         return render(request, 'app/webkit/Dashboard/ClientDashboard.html', {'userRole':userRole,'profile':profile,'task':task,'project':project})
            
@@ -48,7 +48,7 @@ def dashboard(request):
             projectPercentage=100*(projects.filter(status='Completed').count()/projects.count())
         project={
             'projects':projects.exclude(status='Completed'),
-            'percentage':projectPercentage,
+            'percentage':round(projectPercentage,2),
             'total':Project.objects.all().count
                 
         }
@@ -58,7 +58,7 @@ def dashboard(request):
             taskPercentage=100*(tasks.filter(status='Completed').count()/tasks.count())
         task={
             'tasks':tasks.exclude(status='Completed'),
-            'percentage':taskPercentage,
+            'percentage':round(taskPercentage,2),
             'total':Task.objects.all().count
         }
         return render(request, 'app/webkit/Dashboard/Dashboard.html', {'userRole':userRole,'profile':profile,'task':task,'project':project,'employee_count':employee_count,'todays_attendence':todays_attendence})
@@ -72,7 +72,7 @@ def dashboard(request):
         project={
             'total':projects.count,
             'projects':projects.exclude(status='Completed'),
-            'percentage':projectPercentage
+            'percentage':round(projectPercentage,2)
                 
         }
         if tasks.count()==0:
@@ -82,7 +82,7 @@ def dashboard(request):
         task={
             'total':tasks.count,
             'tasks':tasks.exclude(status='Completed'),
-            'percentage':taskPercentage
+            'percentage':round(taskPercentage,2)
         }
         daily_hours = request.user.profile.daily_hours_worked()
         is_clocked_in = request.user.profile.is_clocked_in()
