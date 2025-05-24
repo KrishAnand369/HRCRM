@@ -50,7 +50,7 @@
                         </div>
                         {% if user.is_superuser %}
                         <div class="pl-3 border-left btn-new">
-                            <a href="#" class="btn btn-success" data-target="#project-modal-new" data-toggle="modal">New Project</a>
+                            <a href="#" class="btn btn-primary" data-target="#project-modal-new" data-toggle="modal">New Project</a>
                             {% include 'app/webkit/Modals/projectModal.html' with project=None %}
                         </div>
                         {%endif%}

@@ -64,10 +64,15 @@
 <style>
     #chat-block {
         width: 70%;
-        margin-left:5%;
+        margin-left:1%;
     }
     #chat-list-block {
         width: 20%;
+        height: 500px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        border-radius: 15px;
+        background-color:rgba(8, 8, 8, 0.66);
     }
     /* Chat log container */
     #chat-log {
@@ -78,8 +83,8 @@
         height: 500px;
         overflow-y: auto;
         border: 1px solid #ccc;
-        border-radius: 5px;
-        background-color:rgba(195, 234, 245, 0.66);
+        border-radius: 15px;
+        background-color:rgba(8, 8, 8, 0.66);
     }
 
     /* Message container */
@@ -94,7 +99,7 @@
     /* Current user's messages (right side) */
     .message-right {
         align-self: flex-end;
-        background-color:rgb(0, 255, 81);
+        background-color:rgb(10, 209, 73);
         color: white;
     }
 

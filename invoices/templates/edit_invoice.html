@@ -1,0 +1,253 @@
+{% extends 'app/webkit/main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Edit Invoice #{{ invoice.invoice_number }}</h2>
+    
+    <form method="POST" action="{% url 'invoices:edit_invoice' invoice.id %}" id="invoiceForm">
+        {% csrf_token %}
+        
+        <!-- Client and Due Date Section -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="clientSelect" class="h5">Client <span class="text-danger">*</span></label>
+                    <select name="client_id" id="clientSelect" class="form-control" required>
+                        <option value="" disabled>Select client</option>
+                        {% for client in clients %}
+                            <option value="{{ client.id }}" 
+                                {% if client.id == invoice.client.id %}selected{% endif %}>
+                                {{ client.company_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="dueDate" class="h5">Due Date <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" name="due_date" id="dueDate" 
+                           value="{{ invoice.due_date|date:'Y-m-d' }}" required>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Invoice Items Section -->
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Invoice Items</h5>
+                <button type="button" id="addItem" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-plus mr-1"></i> Add Item
+                </button>
+            </div>
+            
+            <div class="card-body p-0">
+                <div id="itemsContainer">
+                    <div class="table-responsive">
+                        <table class="table mb-0" id="itemsTable">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th width="10%">Name</th>
+                                    <th width="30%">Description</th>
+                                    <th width="10%">Quantity</th>
+                                    <th width="15%">Price</th>
+                                    <th width="15%">Tax %</th>
+                                    <th width="15%">Amount</th>
+                                    <th width="5%"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in invoice.items.all %}
+                                <tr class="item-row">
+                                    <td>
+                                        <input type="text" class="form-control form-control-sm" 
+                                               name="item_name[]" value="{{ item.name }}" required>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control form-control-sm" 
+                                               name="item_description[]" value="{{ item.description }}" required>
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control form-control-sm item-qty" 
+                                               name="item_quantity[]" value="{{ item.quantity }}" step="0.01" min="0.01" required>
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control form-control-sm item-price" 
+                                               name="item_price[]" value="{{ item.price }}" step="0.01" min="0.01" required>
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control form-control-sm item-tax" 
+                                               name="item_tax[]" value="{{ item.tax_rate }}" step="0.01" min="0" max="100">
+                                    </td>
+                                    <td class="item-amount">${{ item.amount|floatformat:2 }}</td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-sm btn-outline-danger remove-item py-0 px-2">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot class="bg-light">
+                                <tr>
+                                    <td colspan="4" class="text-right font-weight-bold">Subtotal:</td>
+                                    <td id="subtotalAmount" class="font-weight-bold">${{ invoice.subtotal|floatformat:2 }}</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-right font-weight-bold">Tax:</td>
+                                    <td id="taxAmount" class="font-weight-bold">${{ invoice.tax_amount|floatformat:2 }}</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-right font-weight-bold">Total:</td>
+                                    <td id="totalAmount" class="font-weight-bold text-primary">${{ invoice.total|floatformat:2 }}</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Status and Terms Section -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="invoiceStatus" class="h5">Status</label>
+                    <select name="status" id="invoiceStatus" class="form-control">
+                        {% for value, label in invoice.STATUS_CHOICES %}
+                            <option value="{{ value }}" {% if value == invoice.status %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="invoiceTerms" class="h5">Payment Terms</label>
+                    <input type="text" class="form-control" name="terms" id="invoiceTerms" 
+                           value="{{ invoice.terms }}">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Notes Section -->
+        <div class="form-group mb-4">
+            <label for="invoiceNotes" class="h5">Notes</label>
+            <textarea class="form-control" name="notes" id="invoiceNotes" rows="2">{{ invoice.notes }}</textarea>
+        </div>
+        
+        <!-- Submit Button -->
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary btn-lg me-2">
+                <i class="fas fa-save mr-2"></i> Update Invoice
+            </button>
+            <a href="{% url 'invoices:invoice_detail' invoice.id %}" class="btn btn-outline-secondary btn-lg">
+                <i class="fas fa-times mr-2"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- Same JavaScript as create_invoice.html -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize calculations
+    function calculateRowAmount(row) {
+        const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
+        const price = parseFloat(row.querySelector('.item-price').value) || 0;
+        const taxRate = parseFloat(row.querySelector('.item-tax').value) || 0;
+        
+        const subtotal = qty * price;
+        const taxAmount = subtotal * (taxRate / 100);
+        const total = subtotal + taxAmount;
+        
+        row.querySelector('.item-amount').textContent = '$' + total.toFixed(2);
+        return { subtotal, taxAmount, total };
+    }
+    
+    function calculateTotals() {
+        let subtotal = 0;
+        let totalTax = 0;
+        let grandTotal = 0;
+        
+        document.querySelectorAll('.item-row').forEach(row => {
+            const amounts = calculateRowAmount(row);
+            subtotal += amounts.subtotal;
+            totalTax += amounts.taxAmount;
+            grandTotal += amounts.total;
+        });
+        
+        document.getElementById('subtotalAmount').textContent = '$' + subtotal.toFixed(2);
+        document.getElementById('taxAmount').textContent = '$' + totalTax.toFixed(2);
+        document.getElementById('totalAmount').textContent = '$' + grandTotal.toFixed(2);
+    }
+    
+    // Add new item row
+    document.getElementById('addItem').addEventListener('click', function() {
+        const tbody = document.querySelector('#itemsTable tbody');
+        const newRow = document.createElement('tr');
+        newRow.className = 'item-row';
+        newRow.innerHTML = `
+            <td>
+                <input type="text" class="form-control form-control-sm" name="item_name[]" placeholder="Item name" required>
+            </td>
+            <td>
+                <input type="text" class="form-control form-control-sm" name="item_description[]" placeholder="Item description" required>
+            </td>
+            <td>
+                <input type="number" class="form-control form-control-sm item-qty" name="item_quantity[]" placeholder="0" step="0.01" min="0.01" required>
+            </td>
+            <td>
+                <input type="number" class="form-control form-control-sm item-price" name="item_price[]" placeholder="0.00" step="0.01" min="0.01" required>
+            </td>
+            <td>
+                <input type="number" class="form-control form-control-sm item-tax" name="item_tax[]" placeholder="0%" step="0.01" min="0" max="100" value="0">
+            </td>
+            <td class="item-amount">$0.00</td>
+            <td class="text-center">
+                <button type="button" class="btn btn-sm btn-outline-danger remove-item py-0 px-2">
+                    <i class="fas fa-times"></i>
+                </button>
+            </td>
+        `;
+        tbody.appendChild(newRow);
+        calculateTotals();
+    });
+    
+    // Remove item row
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-item') || e.target.closest('.remove-item')) {
+            const rows = document.querySelectorAll('.item-row');
+            if (rows.length > 1) {
+                const row = e.target.closest('tr');
+                row.remove();
+                calculateTotals();
+            } else {
+                alert('At least one item is required');
+            }
+        }
+    });
+    
+    // Recalculate when values change
+    document.addEventListener('input', function(e) {
+        if (e.target.classList.contains('item-qty') || 
+            e.target.classList.contains('item-price') || 
+            e.target.classList.contains('item-tax')) {
+            const row = e.target.closest('tr');
+            calculateRowAmount(row);
+            calculateTotals();
+        }
+    });
+    
+    // Initial calculation
+    calculateTotals();
+});
+</script>
+{% endblock %}
