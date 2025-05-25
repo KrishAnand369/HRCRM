@@ -9,7 +9,11 @@
             <div class="card-body">
                 <div class="top-block d-flex align-items-center justify-content-between">
                     <h5>Total Employees</h5>
-                    
+                    <a href="{% url 'CRM:employees' %}" >
+                        <svg class="svg-icon mr-0" id="h-01-p" width="35" height="35" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"> 
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                    </a>
                 </div>
                 <h3><span class="counter">{{ employee_count }}</span></h3>
                 <div class="d-flex align-items-center justify-content-between mt-1">
@@ -24,42 +28,47 @@
     </div>
     <div class="col-md-6 col-lg-3">
         <div class="card card-block card-stretch card-height">
-            
-            <a href="{% url 'CRM:project' %}">
-                <div class="card-body">
-                    <div class="top-block d-flex align-items-center justify-content-between">
-                        <h5>Total Projects</h5> 
-                        {% comment %} <span class="badge badge-warning">Anual</span> {% endcomment %}
-                    </div>
-                    <h3><span class="counter">{{ project.total }}</span></h3>
-                    <div class="d-flex align-items-center justify-content-between mt-1">
-                        <p class="mb-0">Completed</p>
-                        <span class="text-warning">{{ project.percentage }}%</span>
-                    </div>
-                    <div class="iq-progress-bar bg-warning-light mt-2">
-                        <span class="bg-warning iq-progress progress-1" data-percent="{{ project.percentage }}"></span>
-                    </div>
+            <div class="card-body">
+                <div class="top-block d-flex align-items-center justify-content-between">
+                    <h5>Total Projects</h5>
+                    <a href="{% url 'CRM:project' %}">
+                        <svg class="svg-icon mr-0" id="h-01-p" width="35" height="35" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"> 
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                    </a> 
+                    {% comment %} <span class="badge badge-warning">Anual</span> {% endcomment %}
                 </div>
-            </a>
+                <h3><span class="counter">{{ project.total }}</span></h3>
+                <div class="d-flex align-items-center justify-content-between mt-1">
+                    <p class="mb-0">Completed</p>
+                    <span class="text-warning">{{ project.percentage }}%</span>
+                </div>
+                <div class="iq-progress-bar bg-warning-light mt-2">
+                    <span class="bg-warning iq-progress progress-1" data-percent="{{ project.percentage }}"></span>
+                </div>
+            </div>
         </div>
     </div>
     <div class="col-md-6 col-lg-3">
         <div class="card card-block card-stretch card-height">
-            <a href="{% url 'CRM:taskList' %}" >
-                <div class="card-body">
-                    <div class="top-block d-flex align-items-center justify-content-between">
-                        <h5>Total Tasks</h5>
-                    </div>
-                    <h3><span class="counter">{{ task.total }}</span></h3>
-                    <div class="d-flex align-items-center justify-content-between mt-1">
-                        <p class="mb-0">Completed</p>
-                        <span class="text-success">{{ task.percentage }}%</span>
-                    </div>
-                    <div class="iq-progress-bar bg-success-light mt-2">
-                        <span class="bg-success iq-progress progress-1" data-percent="{{ task.percentage }}"></span>
-                    </div>
+            <div class="card-body">
+                <div class="top-block d-flex align-items-center justify-content-between">
+                    <h5>Total Tasks</h5>
+                    <a href="{% url 'CRM:taskList' %}" >
+                        <svg class="svg-icon mr-0" id="h-01-p" width="35" height="35" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"> 
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                    </a>
                 </div>
-            </a>
+                <h3><span class="counter">{{ task.total }}</span></h3>
+                <div class="d-flex align-items-center justify-content-between mt-1">
+                    <p class="mb-0">Completed</p>
+                    <span class="text-success">{{ task.percentage }}%</span>
+                </div>
+                <div class="iq-progress-bar bg-success-light mt-2">
+                    <span class="bg-success iq-progress progress-1" data-percent="{{ task.percentage }}"></span>
+                </div>
+            </div>
         </div>
     </div>
     <div class="col-md-6 col-lg-3">
@@ -67,10 +76,11 @@
             <div class="card-body">
                 <div class="top-block d-flex align-items-center justify-content-between">
                     <h5>Invoices</h5>
-                    <span class="badge badge-info"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#new-invoice-modal">
-                        New Invoice
-                    </button></span>
-                    {% include 'invoiceModal.html'%}
+                    <a href="{% url 'invoices:invoice_list' %}" >
+                        <svg class="svg-icon mr-0" id="h-01-p" width="35" height="35" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"> 
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                    </a>
                 </div>
                 <h3>$<span class="counter">2500</span></h3>
                 <div class="d-flex align-items-center justify-content-between mt-1">

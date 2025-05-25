@@ -1,0 +1,296 @@
+{% extends 'app/webkit/main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Create New Invoice</h2>
+    
+    <form method="POST" action="{% url 'invoices:create_invoice' %}" id="invoiceForm">
+        {% csrf_token %}
+        
+        <!-- Client and Due Date Section -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="clientSelect" class="h5">Client <span class="text-danger">*</span></label>
+                    <select name="client_id" id="clientSelect" class="form-control" required>
+                        <option value="" disabled selected>Select client</option>
+                        {% for client in clients %}
+                            <option value="{{ client.id }}" 
+                                    data-contact="{{ client.contact_name }}"
+                                    data-email="{{ client.email }}"
+                                    data-address="{{ client.address }}"
+                                    data-terms="{{ client.payment_terms }}">
+                                {{ client.company_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="dueDate" class="h5">Due Date <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" name="due_date" id="dueDate" required>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Invoice Items Section -->
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Invoice Items</h5>
+                <button type="button" id="addItem" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-plus mr-1"></i> Add Item
+                </button>
+            </div>
+            
+            <div class="card-body p-0">
+                <div id="itemsContainer">
+                    <div class="table-responsive">
+                        <table class="table mb-0" id="itemsTable">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th width="10%">Name</th>
+                                    <th width="30%">Description</th>
+                                    <th width="10%">Quantity</th>
+                                    <th width="15%">Price</th>
+                                    <th width="15%">Tax %</th>
+                                    <th width="15%">Amount</th>
+                                    <th width="5%"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="item-row">
+                                    <td>
+                                        <input type="text" class="form-control form-control-sm" name="item_name[]" placeholder="Item name" required>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control form-control-sm" name="item_description[]" placeholder="Item description" required>
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control form-control-sm item-qty" name="item_quantity[]" placeholder="0" step="0.01" min="0.01" required>
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control form-control-sm item-price" name="item_price[]" placeholder="0.00" step="0.01" min="0.01" required>
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control form-control-sm item-tax" name="item_tax[]" placeholder="0%" step="0.01" min="0" max="100" value="0">
+                                    </td>
+                                    <td class="item-amount">$0.00</td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-sm btn-outline-danger remove-item py-0 px-2">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="bg-light">
+                                <tr>
+                                    <td colspan="5" class="text-right font-weight-bold">Subtotal:</td>
+                                    <td id="subtotalAmount" class="font-weight-bold">$0.00</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" class="text-right font-weight-bold">Tax:</td>
+                                    <td id="taxAmount" class="font-weight-bold">$0.00</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" class="text-right font-weight-bold">Total:</td>
+                                    <td id="totalAmount" class="font-weight-bold text-primary">$0.00</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Status and Terms Section -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="invoiceStatus" class="h5">Status</label>
+                    <select name="status" id="invoiceStatus" class="form-control">
+                        <option value="draft">Draft</option>
+                        <option value="sent">Sent</option>
+                        <option value="paid">Paid</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="invoiceTerms" class="h5">Payment Terms</label>
+                    <input type="text" class="form-control" name="terms" id="invoiceTerms" value="Payment due within 30 days">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Notes Section -->
+        <div class="form-group mb-4">
+            <label for="invoiceNotes" class="h5">Notes</label>
+            <textarea class="form-control" name="notes" id="invoiceNotes" rows="2" placeholder="Additional notes..."></textarea>
+        </div>
+        
+        <!-- Submit Button -->
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-save mr-2"></i> Create Invoice
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize date picker with default 30 days from today
+    function initDueDate() {
+        const today = new Date();
+        const dueDate = new Date();
+        dueDate.setDate(today.getDate() + 30);
+        document.getElementById('dueDate').valueAsDate = dueDate;
+    }
+    
+    // Client details autofill
+    document.getElementById('clientSelect').addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        document.getElementById('invoiceTerms').value = selectedOption.dataset.terms || 'Payment due within 30 days';
+    });
+    
+    // Calculate amount for a single row
+    function calculateRowAmount(row) {
+        const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
+        const price = parseFloat(row.querySelector('.item-price').value) || 0;
+        const taxRate = parseFloat(row.querySelector('.item-tax').value) || 0;
+        
+        const subtotal = qty * price;
+        const taxAmount = subtotal * (taxRate / 100);
+        const total = subtotal + taxAmount;
+        
+        row.querySelector('.item-amount').textContent = '$' + total.toFixed(2);
+        return { subtotal, taxAmount, total };
+    }
+    
+    // Calculate all amounts
+    function calculateTotals() {
+        let subtotal = 0;
+        let totalTax = 0;
+        let grandTotal = 0;
+        
+        document.querySelectorAll('.item-row').forEach(row => {
+            const amounts = calculateRowAmount(row);
+            subtotal += amounts.subtotal;
+            totalTax += amounts.taxAmount;
+            grandTotal += amounts.total;
+        });
+        
+        document.getElementById('subtotalAmount').textContent = '$' + subtotal.toFixed(2);
+        document.getElementById('taxAmount').textContent = '$' + totalTax.toFixed(2);
+        document.getElementById('totalAmount').textContent = '$' + grandTotal.toFixed(2);
+    }
+    
+    // Add new item row
+    document.getElementById('addItem').addEventListener('click', function() {
+        const tbody = document.querySelector('#itemsTable tbody');
+        const newRow = document.createElement('tr');
+        newRow.className = 'item-row';
+        newRow.innerHTML = `
+            <td>
+                <input type="text" class="form-control form-control-sm" name="item_name[]" placeholder="Item name" required>
+            </td>
+            <td>
+                <input type="text" class="form-control form-control-sm" name="item_description[]" placeholder="Item description" required>
+            </td>
+            <td>
+                <input type="number" class="form-control form-control-sm item-qty" name="item_quantity[]" placeholder="0" step="0.01" min="0.01" required>
+            </td>
+            <td>
+                <input type="number" class="form-control form-control-sm item-price" name="item_price[]" placeholder="0.00" step="0.01" min="0.01" required>
+            </td>
+            <td>
+                <input type="number" class="form-control form-control-sm item-tax" name="item_tax[]" placeholder="0%" step="0.01" min="0" max="100" value="0">
+            </td>
+            <td class="item-amount">$0.00</td>
+            <td class="text-center">
+                <button type="button" class="btn btn-sm btn-outline-danger remove-item py-0 px-2">
+                    <i class="fas fa-times"></i>
+                </button>
+            </td>
+        `;
+        tbody.appendChild(newRow);
+        calculateTotals();
+    });
+    
+    // Remove item row
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-item') || e.target.closest('.remove-item')) {
+            const rows = document.querySelectorAll('.item-row');
+            if (rows.length > 1) {
+                const row = e.target.closest('tr');
+                row.remove();
+                calculateTotals();
+            } else {
+                alert('At least one item is required');
+            }
+        }
+    });
+    
+    // Recalculate when values change
+    document.addEventListener('input', function(e) {
+        if (e.target.classList.contains('item-qty') || 
+            e.target.classList.contains('item-price') || 
+            e.target.classList.contains('item-tax')) {
+            const row = e.target.closest('tr');
+            calculateRowAmount(row);
+            calculateTotals();
+        }
+    });
+    
+    // Form validation
+    document.getElementById('invoiceForm').addEventListener('submit', function(e) {
+        let valid = true;
+        const rows = document.querySelectorAll('.item-row');
+        
+        // Validate client and due date
+        if (!document.getElementById('clientSelect').value || 
+            !document.getElementById('dueDate').value) {
+            alert('Please select a client and due date');
+            return false;
+        }
+        
+        // Validate items
+        rows.forEach(row => {
+            const qty = row.querySelector('.item-qty').value;
+            const price = row.querySelector('.item-price').value;
+            const name = row.querySelector('input[name="item_name[]"]').value;
+            const desc = row.querySelector('input[name="item_description[]"]').value;
+            
+            if (!name || !desc || !qty || !price) {
+                valid = false;
+                row.querySelector('input[name="item_name[]"]').focus();
+            }
+        });
+        
+        if (!valid) {
+            e.preventDefault();
+            alert('Please fill all required fields for each item');
+            return false;
+        }
+        
+        if (rows.length === 0) {
+            e.preventDefault();
+            alert('Please add at least one invoice item');
+            return false;
+        }
+    });
+    
+    // Initialize on page load
+    initDueDate();
+    calculateTotals();
+});
+</script>
+
+{% endblock %}
