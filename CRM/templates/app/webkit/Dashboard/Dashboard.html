@@ -82,13 +82,13 @@
                         </svg>
                     </a>
                 </div>
-                <h3>$<span class="counter">2500</span></h3>
+                <h3>$<span class="counter">{{ invoice_sum.total_invoices }}</span></h3>
                 <div class="d-flex align-items-center justify-content-between mt-1">
-                    <p class="mb-0">Pending</p>
-                    <span class="text-info">55%</span>
+                    <p class="mb-0">Payment Received</p>
+                    <span class="text-info">{{ invoice_sum.percentage_paid }}%</span>
                 </div>
                 <div class="iq-progress-bar bg-info-light mt-2">
-                    <span class="bg-info iq-progress progress-1" data-percent="55"></span>
+                    <span class="bg-info iq-progress progress-1" data-percent="{{ invoice_sum.percentage_paid }}"></span>
                 </div>
             </div>
         </div>
