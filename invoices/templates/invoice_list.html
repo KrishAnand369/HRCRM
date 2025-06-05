@@ -7,9 +7,11 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <h2 class="mb-0">Invoices</h2>
+                {% if user.is_superuser %}
                 <a href="{% url 'invoices:create_invoice' %}" class="btn btn-primary">
                     <i class="fas fa-plus me-2"></i>Create New
                 </a>
+                {%endif%}
             </div>
         </div>
     </div>
@@ -87,6 +89,7 @@
                             </td>
                             <td>${{ invoice.total|floatformat:2 }}</td>
                             <td class="text-end pe-4">
+                                {% if user.is_superuser %}
                                 <div class="dropdown">
                                     <button class="btn btn-sm btn-outline-secondary dropdown-toggle" 
                                             type="button" data-bs-toggle="dropdown" 
@@ -112,6 +115,20 @@
                                         </li>
                                     </ul>
                                 </div>
+                                {% else %}
+                                {% comment %} <button class="btn btn-sm btn-outline-secondary dropdown-toggle" 
+                                            type="button" data-bs-toggle="dropdown" 
+                                            aria-expanded="false">
+                                        view
+                                    </button> {% endcomment %}
+                                    <a class="btn btn-outline-secondary" href="{% url 'invoices:invoice_detail' invoice.id %}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                        </svg>
+                                        View
+                                    </a>
+                                {% endif %}
                             </td>
                         </tr>
                         {% empty %}
@@ -120,9 +137,11 @@
                                 <div class="d-flex flex-column align-items-center">
                                     <i class="fas fa-file-invoice fa-3x text-muted mb-3"></i>
                                     <h5 class="text-muted">No invoices found</h5>
+                                    {% if user.is_superuser %}
                                     <a href="{% url 'invoices:create_invoice' %}" class="btn btn-primary mt-2">
                                         Create Your First Invoice
                                     </a>
+                                    {%endif%}
                                 </div>
                             </td>
                         </tr>

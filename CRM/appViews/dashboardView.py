@@ -5,6 +5,7 @@ from CRM.models import UserProfile,Task,Project,Client,ClockEvent,User
 from CRM.controller import authView
 from django.utils import timezone
 from datetime import time
+from invoices.utils import get_current_month_invoice_totals,get_current_month_invoice_totals_client
 
 @login_required
 def dashboard(request):
@@ -32,7 +33,8 @@ def dashboard(request):
             'tasks':tasks.exclude(status='Completed'),
             'percentage':round(taskPercentage,2)
         }
-        return render(request, 'app/webkit/Dashboard/ClientDashboard.html', {'userRole':userRole,'profile':profile,'task':task,'project':project})
+        invoice_sum = get_current_month_invoice_totals_client(profile)
+        return render(request, 'app/webkit/Dashboard/ClientDashboard.html', {'userRole':userRole,'profile':profile,'task':task,'project':project,'invoice_sum':invoice_sum})
            
     profile = UserProfile.objects.get(user=request.user)
     if request.user.is_superuser:
@@ -42,6 +44,7 @@ def dashboard(request):
         employee_count = UserProfile.objects.all().count()
         employee_count =employee_count-admincount
         todays_attendence = get_clocked_in_users_count()/employee_count*100
+        invoice_sum = get_current_month_invoice_totals()
         if projects.count()==0:
             projectPercentage=0
         else: 
@@ -61,7 +64,7 @@ def dashboard(request):
             'percentage':round(taskPercentage,2),
             'total':Task.objects.all().count
         }
-        return render(request, 'app/webkit/Dashboard/Dashboard.html', {'userRole':userRole,'profile':profile,'task':task,'project':project,'employee_count':employee_count,'todays_attendence':todays_attendence})
+        return render(request, 'app/webkit/Dashboard/Dashboard.html', {'userRole':userRole,'profile':profile,'task':task,'project':project,'employee_count':employee_count,'todays_attendence':todays_attendence,'invoice_sum':invoice_sum})
     else:
         projects = Project.objects.filter(assigned_users=profile)
         tasks =Task.objects.filter(assigned_to=profile)
