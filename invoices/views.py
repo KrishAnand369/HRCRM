@@ -201,3 +201,18 @@ def update_invoice_totals(invoice):
     invoice.tax_amount = tax_amount
     invoice.total = total
     invoice.save()
+    
+@login_required
+def mark_invoice_paid(request, pk):
+    invoice = get_object_or_404(Invoice, pk=pk)
+    try:
+        # Update invoice status to paid
+        invoice.status = 'paid'
+        invoice.save()
+        messages.success(request, 'Invoice updated successfully!')
+        return redirect('invoices:invoice_detail', pk=invoice.id)
+        
+    except Exception as e:
+        messages.error(request, f"Error updating invoice: {str(e)}")
+        return redirect('invoices:invoice_detail', pk=pk)
+ 
