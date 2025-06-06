@@ -177,6 +177,24 @@ def invoice_list(request):
         'userRole':userRole,
         'invoices': invoices
     })
+    
+@login_required
+def invoice_list_new(request):
+    status = request.GET.get('status')
+    if status == 'All' or not status:  # If 'All projects' is selected or no status is provided
+        invoices = Invoice.objects.all()
+    elif status:    
+        invoices = Invoice.objects.filter(status=status)
+    invoices = invoices.order_by('-date')
+    userRole = authView.get_user_role(request.user)
+    if userRole =='client':
+        profile = Client.objects.get(user=request.user)
+        invoices = invoices.filter(client=profile)
+    return render(request, 'invoice_list.html', {
+        'userRole':userRole,
+        'invoices': invoices,
+        'status': status,
+    })
 
 def get_client_details(request, client_id):
     client = get_object_or_404(Client, id=client_id)

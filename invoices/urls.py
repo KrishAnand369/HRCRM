@@ -2,13 +2,15 @@ from django.urls import path
 from .views import (
     create_invoice, edit_invoice,
     invoice_detail, invoice_list,
-    get_client_details,mark_invoice_paid
+    get_client_details,mark_invoice_paid,
+    invoice_list_new
 )
 
 app_name = 'invoices'
 
 urlpatterns = [
     path('invoices/', invoice_list, name='invoice_list'),
+    path('invoicesuy/', invoice_list_new, name='invoice_list_new'),
     path('create/', create_invoice, name='create_invoice'),
     path('<int:pk>/', invoice_detail, name='invoice_detail'),
     path('<int:pk>/edit/', edit_invoice, name='edit_invoice'),
