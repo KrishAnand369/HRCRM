@@ -103,10 +103,10 @@ def clock_in(request):
         messages.warning(request, "Only employees can clock in.")
     else:
         current_time = timezone.now()
-        start_of_day = timezone.make_aware(timezone.datetime.combine(current_time.date(), time(2, 0)))  # 7:30 PM
-        end_of_day = timezone.make_aware(timezone.datetime.combine(current_time.date(), time(12, 0)))  # 5:30 PM
+        start_of_day = timezone.make_aware(timezone.datetime.combine(current_time.date(), time(7, 30)))  # 7:30 PM
+        end_of_day = timezone.make_aware(timezone.datetime.combine(current_time.date(), time(17, 30)))  # 5:30 PM
 
-        # Check if the current time is after 5:00 PM
+        # Check if the current time is after 5:30 PM
         if current_time > end_of_day:
             messages.warning(request, "You cannot clock in after 5:30 PM.")    
         elif current_time < start_of_day:

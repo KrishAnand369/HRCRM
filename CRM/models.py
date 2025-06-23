@@ -218,4 +218,22 @@ class LeaveApplication(models.Model):
 
     def __str__(self):
         return f"{self.employee.user.username} - {self.date} - {self.status}"
+
+class Estimate(models.Model):
+    project = models.ForeignKey('Project', on_delete=models.CASCADE)
+    admin = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='sent_estimates')
+    client = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True, related_name='received_estimates')
+    document = models.FileField(upload_to='estimates/%Y/%m/%d/')
+    status = models.CharField(max_length=20, choices=[
+        ('draft', 'Draft'),
+        ('sent', 'Sent'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected')
+    ], default='draft')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    notes = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"Estimate for {self.project.name} - {self.status}"
         

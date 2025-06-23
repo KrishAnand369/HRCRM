@@ -45,7 +45,7 @@ def project_list(request):
     }
     return render(request, 'app/webkit/project/projects.html', context)
 
-
+@login_required
 def project_save(request, project_id=None):
     project = None
     if project_id:  # Edit existing project
