@@ -94,6 +94,7 @@
                                 <span class="ml-4">Chat</span>
                             </a>
                         </li>
+                       
                         
                         {% if userRole == 'user' %}
                         <li class="">
@@ -121,6 +122,7 @@
                                 <span class="ml-4">Desk</span>
                             </a>
                         </li>
+                        
                         <li class="">
                             <a href="../backend/page-calender.html" class="svg-icon">                        
                                 <svg class="svg-icon" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -489,6 +491,16 @@
                         </li> {% endcomment %}
                         
                         {% endif %}
+                        {% if request.user.is_superuser or userRole == 'client' %}
+                        <li class="">
+                            <a href="{% url 'CRM:estimates' %}" class="svg-icon">                        
+                                <svg class="svg-icon" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                <span class="ml-4">Estimates</span>
+                            </a>
+                        </li>
+                        {% endif%}
                     </ul>
                 </nav>
                 {% comment %} <div id="sidebar-bottom" class="position-relative sidebar-bottom">

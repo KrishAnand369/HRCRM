@@ -5,7 +5,7 @@ from CRM.models import UserProfile,Task,Project,Client,ClockEvent,User
 from CRM.controller import authView
 from django.utils import timezone
 from datetime import time
-from invoices.utils import get_current_month_invoice_totals,get_current_month_invoice_totals_client
+from invoices.utils import get_current_month_invoice_totals,get_current_month_invoice_totals_client,get_invoice_totals_client,get_invoice_totals
 
 @login_required
 def dashboard(request):
@@ -33,7 +33,7 @@ def dashboard(request):
             'tasks':tasks.exclude(status='Completed'),
             'percentage':round(taskPercentage,2)
         }
-        invoice_sum = get_current_month_invoice_totals_client(profile)
+        invoice_sum = get_invoice_totals_client(profile)
         return render(request, 'app/webkit/Dashboard/ClientDashboard.html', {'userRole':userRole,'profile':profile,'task':task,'project':project,'invoice_sum':invoice_sum})
            
     profile = UserProfile.objects.get(user=request.user)
@@ -44,7 +44,7 @@ def dashboard(request):
         employee_count = UserProfile.objects.all().count()
         employee_count =employee_count-admincount
         todays_attendence = get_clocked_in_users_count()/employee_count*100
-        invoice_sum = get_current_month_invoice_totals()
+        invoice_sum = get_invoice_totals()
         if projects.count()==0:
             projectPercentage=0
         else: 
@@ -103,10 +103,10 @@ def clock_in(request):
         messages.warning(request, "Only employees can clock in.")
     else:
         current_time = timezone.now()
-        start_of_day = timezone.make_aware(timezone.datetime.combine(current_time.date(), time(2, 0)))  # 7:30 PM
-        end_of_day = timezone.make_aware(timezone.datetime.combine(current_time.date(), time(12, 0)))  # 5:30 PM
+        start_of_day = timezone.make_aware(timezone.datetime.combine(current_time.date(), time(7, 30)))  # 7:30 PM
+        end_of_day = timezone.make_aware(timezone.datetime.combine(current_time.date(), time(17, 30)))  # 5:30 PM
 
-        # Check if the current time is after 5:00 PM
+        # Check if the current time is after 5:30 PM
         if current_time > end_of_day:
             messages.warning(request, "You cannot clock in after 5:30 PM.")    
         elif current_time < start_of_day:

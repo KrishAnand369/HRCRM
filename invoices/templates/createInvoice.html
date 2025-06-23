@@ -77,7 +77,7 @@
                                     <td>
                                         <input type="number" class="form-control form-control-sm item-tax" name="item_tax[]" placeholder="0%" step="0.01" min="0" max="100" value="0">
                                     </td>
-                                    <td class="item-amount">$0.00</td>
+                                    <td class="item-amount">₹0.00</td>
                                     <td class="text-center">
                                         <button type="button" class="btn btn-sm btn-outline-danger remove-item py-0 px-2">
                                             <i class="fas fa-times"></i>
@@ -88,17 +88,17 @@
                             <tfoot class="bg-light">
                                 <tr>
                                     <td colspan="5" class="text-right font-weight-bold">Subtotal:</td>
-                                    <td id="subtotalAmount" class="font-weight-bold">$0.00</td>
+                                    <td id="subtotalAmount" class="font-weight-bold">₹0.00</td>
                                     <td></td>
                                 </tr>
                                 <tr>
                                     <td colspan="5" class="text-right font-weight-bold">Tax:</td>
-                                    <td id="taxAmount" class="font-weight-bold">$0.00</td>
+                                    <td id="taxAmount" class="font-weight-bold">₹0.00</td>
                                     <td></td>
                                 </tr>
                                 <tr>
                                     <td colspan="5" class="text-right font-weight-bold">Total:</td>
-                                    <td id="totalAmount" class="font-weight-bold text-primary">$0.00</td>
+                                    <td id="totalAmount" class="font-weight-bold text-primary">₹0.00</td>
                                     <td></td>
                                 </tr>
                             </tfoot>
@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const taxAmount = subtotal * (taxRate / 100);
         const total = subtotal + taxAmount;
         
-        row.querySelector('.item-amount').textContent = '$' + total.toFixed(2);
+        row.querySelector('.item-amount').textContent = '₹' + total.toFixed(2);
         return { subtotal, taxAmount, total };
     }
     
@@ -187,9 +187,9 @@ document.addEventListener('DOMContentLoaded', function() {
             grandTotal += amounts.total;
         });
         
-        document.getElementById('subtotalAmount').textContent = '$' + subtotal.toFixed(2);
-        document.getElementById('taxAmount').textContent = '$' + totalTax.toFixed(2);
-        document.getElementById('totalAmount').textContent = '$' + grandTotal.toFixed(2);
+        document.getElementById('subtotalAmount').textContent = '₹' + subtotal.toFixed(2);
+        document.getElementById('taxAmount').textContent = '₹' + totalTax.toFixed(2);
+        document.getElementById('totalAmount').textContent = '₹' + grandTotal.toFixed(2);
     }
     
     // Add new item row
@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <td>
                 <input type="number" class="form-control form-control-sm item-tax" name="item_tax[]" placeholder="0%" step="0.01" min="0" max="100" value="0">
             </td>
-            <td class="item-amount">$0.00</td>
+            <td class="item-amount">₹0.00</td>
             <td class="text-center">
                 <button type="button" class="btn btn-sm btn-outline-danger remove-item py-0 px-2">
                     <i class="fas fa-times"></i>

@@ -23,25 +23,35 @@
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Search invoices...">
                         <button class="btn btn-outline-secondary" type="button">
-                            <i class="fas fa-search"></i>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                            </svg>
+
                         </button>
                     </div>
                 </div>
                 <div class="col-md-6 text-md-end mt-2 mt-md-0">
+
                     <div class="dropdown d-inline-block me-2">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" 
+                        {% comment %} <button class="btn btn-outline-secondary dropdown-toggle" type="button" 
                                 data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-filter me-1"></i> Status
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">All</a></li>
-                            <li><a class="dropdown-item" href="#">Draft</a></li>
-                            <li><a class="dropdown-item" href="#">Sent</a></li>
-                            <li><a class="dropdown-item" href="#">Paid</a></li>
-                            <li><a class="dropdown-item" href="#">Overdue</a></li>
-                        </ul>
+                        </button> {% endcomment %}
+                        <form method="GET" action="{% url 'invoices:invoice_list_new'%}">
+                            <div class="dropdown status-dropdown mr-3">
+                                
+                                <select name="status" id="status-select" class="btn dropdown-toggle form-control" onchange="this.form.submit()" type="button" 
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                    <option value="All" {% if not request.GET.status or request.GET.status == 'All' %}selected{% endif %}>All</option>
+                                    <option value="draft" {% if request.GET.status == "draft" %}selected{% endif %}>Draft</option>
+                                    <option value="sent" {% if request.GET.status == "sent" %}selected{% endif %}>Sent</option>
+                                    <option value="paid" {% if request.GET.status == "paid" %}selected{% endif %}>Paid</option>
+                                    <option value="overdue" {% if request.GET.status == "overdue" %}selected{% endif %}>Overdue</option>
+                                </select>
+                            </div>
+                        </form>
                     </div>
-                    <div class="dropdown d-inline-block">
+                    {% comment %} <div class="dropdown d-inline-block">
                         <button class="btn btn-outline-secondary dropdown-toggle" type="button" 
                                 data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-calendar me-1"></i> Date Range
@@ -52,7 +62,7 @@
                             <li><a class="dropdown-item" href="#">This Quarter</a></li>
                             <li><a class="dropdown-item" href="#">Custom Range</a></li>
                         </ul>
-                    </div>
+                    </div> {% endcomment %}
                 </div>
             </div>
         </div>
@@ -87,7 +97,7 @@
                                     {{ invoice.get_status_display }}
                                 </span>
                             </td>
-                            <td>${{ invoice.total|floatformat:2 }}</td>
+                            <td>₹{{ invoice.total|floatformat:2 }}</td>
                             <td class="text-end pe-4">
                                 {% if user.is_superuser %}
                                 <div class="dropdown">

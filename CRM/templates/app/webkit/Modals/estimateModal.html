@@ -1,0 +1,91 @@
+<div class="modal fade" role="dialog" aria-modal="true" id="estimate-modal-{% if estimate %}{{ estimate.id }}{% else %}new{% endif %}">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center pb-3 border-bottom">
+                <h3 class="modal-title">{% if estimate %}Edit Estimate{% else %}New Estimate{% endif %}</h3>
+                {% if not estimate %}
+                <a href="#" class="svg-icon" data-dismiss="modal">                        
+                    <svg class="svg-icon" width="35" height="35" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 18 18 6M6 6l12 12"></path>
+                    </svg>
+                </a>
+                {% endif %}
+            </div>
+            <form method="POST" action="{% if estimate %}{% url 'CRM:estimate_save' estimate.id %}{% else %}{% url 'CRM:estimate_save' %}{% endif %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group mb-3">
+                                <label for="project" class="h5">Project*</label>
+                                <select name="project" class="form-control" {% if not request.user.is_superuser %}disabled{% endif %} required>
+                                    <option value="">Select Project</option>
+                                    {% for project in projects %}
+                                        <option value="{{ project.id }}" {% if estimate and estimate.project.id == project.id %}selected{% endif %}>
+                                            {{ project.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                {% if not request.user.is_superuser %}
+                                <input type="hidden" name="project" value="{% if estimate %}{{ estimate.project.id }}{% endif %}">
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <label for="status" class="h5">Status*</label>
+                                <select name="status" class="form-control" required>
+                                    <option value="draft" {% if estimate and estimate.status == "draft" %}selected{% endif %}>Draft</option>
+                                    <option value="sent" {% if estimate and estimate.status == "sent" %}selected{% endif %}>Sent</option>
+                                    <option value="approved" {% if estimate and estimate.status == "approved" %}selected{% endif %}>Approved</option>
+                                    <option value="rejected" {% if estimate and estimate.status == "rejected" %}selected{% endif %}>Rejected</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-12">
+                            <div class="form-group mb-3">
+                                <label for="estimate_doc" class="h5">Estimate Document {% if not estimate %}*{% endif %}</label>
+                                {% if request.user.is_superuser %}
+                                    <input type="file" class="form-control" id="estimate_doc" name="estimate_doc" {% if not estimate %}required{% endif %}>
+                                    {% if estimate and estimate.document %}
+                                    <small class="text-muted">Current: <a href="{{ estimate.document.url }}" target="_blank">{{ estimate.document.name }}</a></small>
+                                    {% endif %}
+                                {% else %}
+                                    {% if estimate and estimate.document %}
+                                        <div class="form-control-plaintext">
+                                            <a href="{{ estimate.document.url }}" target="_blank">{{ estimate.document.name }}</a>
+                                        </div>
+                                    {% else %}
+                                        <div class="text-muted">No document uploaded</div>
+                                    {% endif %}
+                                    <input type="hidden" name="estimate_doc" value="{% if estimate %}{{ estimate.document.name }}{% endif %}">
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-12">
+                            <div class="form-group mb-3">
+                                <label for="notes" class="h5">Notes</label>
+                                {% if request.user.is_superuser %}
+                                    <textarea class="form-control" id="notes" name="notes" placeholder="Additional notes...">{% if estimate %}{{ estimate.notes }}{% endif %}</textarea>
+                                {% else %}
+                                    <div class="form-control-plaintext">{% if estimate %}{{ estimate.notes|default:"No notes" }}{% else %}No notes{% endif %}</div>
+                                    <input type="hidden" name="notes" value="{% if estimate %}{{ estimate.notes }}{% endif %}">
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-12">
+                            <div class="d-flex flex-wrap align-items-center justify-content-center mt-2">
+                                <button type="submit" class="btn btn-primary mr-3">Save Estimate</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

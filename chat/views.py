@@ -27,10 +27,14 @@ def private_chat(request, username=None):
     if userRole =='client':
         profile = Client.objects.get(user=request.user)
         projects = Project.objects.filter(client=profile)
-        employees = UserProfile.objects.filter(assigned_projects__in=projects).distinct() 
+        project_users = UserProfile.objects.filter(assigned_projects__in=projects)
+        superuser_profiles = UserProfile.objects.filter(user__is_superuser=True)
+        employees = (project_users | superuser_profiles).distinct()
     else:
         profile = UserProfile.objects.get(user=request.user)
         employees= UserProfile.objects.all().exclude(user=request.user)
+        superuser_profiles = UserProfile.objects.filter(user__is_superuser=True).exclude(user=request.user)
+        employees = employees.union(superuser_profiles)
         if not request.user.is_superuser:
             # Step 1: Get all teams the employee is part of
             teams = Team.objects.filter(Q(members=profile) | Q(leader=profile))
