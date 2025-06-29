@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from CRM.controller import authView
-from CRM.appViews import clientView,projectView,taskView,dashboardView,employeeView,leaveView,teamView,estimateView
+from CRM.appViews import clientView,projectView,taskView,dashboardView,employeeView,leaveView,teamView,estimateView,ticketView
 
 app_name ="CRM"
 urlpatterns = [
@@ -48,8 +48,12 @@ urlpatterns = [
     path('team/<int:team_id>/add_member/', teamView.add_member, name='add_member'),
     path('team/<int:team_id>/set_leader/', teamView.set_leader, name='set_leader'),
      
-     path('estimates/', estimateView.estimate_list, name='estimates'),
-     path('estimates/delete/<int:estimate_id>/', estimateView.delete_estimate, name='delete_estimate'),
-     path('estimates/save/<int:estimate_id>/', estimateView.estimate_save, name='estimate_save'),
-     path('estimates/save/', estimateView.estimate_save, name='estimate_save'),
+    path('estimates/', estimateView.estimate_list, name='estimates'),
+    path('estimates/delete/<int:estimate_id>/', estimateView.delete_estimate, name='delete_estimate'),
+    path('estimates/save/<int:estimate_id>/', estimateView.estimate_save, name='estimate_save'),
+    path('estimates/save/', estimateView.estimate_save, name='estimate_save'),
+     
+    path('tickets/create/', ticketView.ticket_save, name='create_ticket'),
+    path('tickets/<int:ticket_id>/edit/', ticketView.ticket_save, name='edit_ticket'),
+    path('tickets', ticketView.ticket_list, name='ticket_list'),
 ]   

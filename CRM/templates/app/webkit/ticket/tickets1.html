@@ -1,0 +1,247 @@
+{% extends 'app/webkit/main.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex flex-wrap align-items-center justify-content-between breadcrumb-content">
+                    <h5>{% if userRole == 'client' %}Your Tickets{% else %}Ticket Management{% endif %}</h5>
+                    <div class="d-flex flex-wrap align-items-center justify-content-between">
+                        <form method="GET" action="{% url 'CRM:ticket_list' %}">
+                            <div class="dropdown status-dropdown mr-3">
+                                <select name="status" id="status-select" class="form-control" onchange="this.form.submit()">
+                                    <option value="all" {% if not request.GET.status or request.GET.status == 'all' %}selected{% endif %}>All Tickets</option>
+                                    <option value="Created" {% if request.GET.status == "Created" %}selected{% endif %}>Created</option>
+                                    <option value="Pending" {% if request.GET.status == "Pending" %}selected{% endif %}>Pending</option>
+                                    <option value="Solved" {% if request.GET.status == "Solved" %}selected{% endif %}>Solved</option>
+                                    <option value="Assigned" {% if request.GET.status == "Assigned" %}selected{% endif %}>Assigned</option>
+                                </select>
+                            </div>
+                        </form>
+                        
+                        {% if userRole != 'client' %}
+                        <form method="GET" action="{% url 'CRM:ticket_list' %}" class="mr-3">
+                            <div class="dropdown status-dropdown">
+                                <select name="assigned_to" id="assigned-select" class="form-control" onchange="this.form.submit()">
+                                    <option value="all" {% if not request.GET.assigned_to or request.GET.assigned_to == 'all' %}selected{% endif %}>All Assignments</option>
+                                    <option value="me" {% if request.GET.assigned_to == "me" %}selected{% endif %}>Assigned to Me</option>
+                                    <option value="unassigned" {% if request.GET.assigned_to == "unassigned" %}selected{% endif %}>Unassigned</option>
+                                </select>
+                            </div>
+                        </form>
+                        {% endif %}
+                        
+                        <div class="list-grid-toggle d-flex align-items-center mr-3">
+                            <div data-toggle-extra="tab" data-target-extra="#grid" class="active">
+                                <div class="grid-icon mr-3">
+                                    <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div data-toggle-extra="tab" data-target-extra="#list">
+                                <div class="grid-icon">
+                                    <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="21" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="3" y2="18"></line>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        {% if userRole == 'client' %}
+                        <div class="pl-3 border-left btn-new">
+                            <a href="#" class="btn btn-primary" data-target="#ticket-modal-new" data-toggle="modal">
+                                <i class="las la-plus-circle mr-1"></i> New Ticket
+                            </a>
+                            {% include 'app/webkit/Modals/ticketModal.html' with ticket=None %}
+                        </div>
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="grid" class="item-content animate__animated animate__fadeIn active" data-toggle-extra="tab-content">
+    <div class="row">
+        {% for ticket in tickets %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card card-block card-stretch card-height">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="ticket-status-badge badge-{{ ticket.status }}">
+                            {{ ticket.get_status_display }}
+                        </div>
+                         {% if user.is_superuser %}
+                        <div class="d-flex align-items-center">
+                            <a href="#" class="text-body text-blue" data-target="#ticket-modal-{{ ticket.id }}" data-toggle="modal">
+                                <i class="las la-pen mr-0"></i>
+                                {% include 'app/webkit/Modals/ticketModal.html' with project=None %}
+                            </a>
+                            
+                        </div>
+                        {% endif %} 
+                    </div>
+                    
+                    <h5 class="mb-2">{{ ticket.topic }}</h5>
+                    <p class="mb-3 text-muted">{{ ticket.description|truncatechars:100 }}</p>
+                    
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="client-info">
+                            <small class="text-muted">Client</small>
+                            <p class="mb-0">{{ ticket.client.company_name }}</p>
+                        </div>
+                        <div class="date-info text-right">
+                            <small class="text-muted">Created</small>
+                            <p class="mb-0">{{ ticket.created_at|date:"M d, Y" }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                        {% if ticket.assigned_employee %}
+                        <div class="assignee-info">
+                            <small class="text-muted">Assigned to</small>
+                            <p class="mb-0">{{ ticket.assigned_employee.user.get_full_name }}</p>
+                        </div>
+                        {% else %}
+                        <div class="assignee-info">
+                            <small class="text-muted">Assigned to</small>
+                            <p class="mb-0 text-warning">Unassigned</p>
+                        </div>
+                        {% endif %}
+                        
+                        {% if ticket.document %}
+                        <a href="{{ ticket.document.url }}" target="_blank" class="btn btn-light btn-sm">
+                            <i class="las la-paperclip"></i> Attachment
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="las la-ticket-alt display-4 text-muted mb-3"></i>
+                    <h4>No tickets found</h4>
+                    <p class="text-muted">Create your first ticket by clicking the "New Ticket" button</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div id="list" class="item-content animate__animated animate__fadeIn" data-toggle-extra="tab-content">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table mb-0 table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Ticket ID</th>
+                                    <th>Topic</th>
+                                    <th>Client</th>
+                                    <th>Status</th>
+                                    <th>Assigned To</th>
+                                    <th>Created</th>
+                                    <th>Document</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ticket in tickets %}
+                                <tr>
+                                    <td>#{{ ticket.id }}</td>
+                                    <td>{{ ticket.topic }}</td>
+                                    <td>{{ ticket.client.company_name }}</td>
+                                    <td>
+                                        <span class="ticket-status-badge badge-{{ ticket.status }}">
+                                            {{ ticket.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if ticket.assigned_employee %}
+                                            {{ ticket.assigned_employee.user.get_full_name }}
+                                        {% else %}
+                                            <span class="text-warning">Unassigned</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ ticket.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        {% comment %} <a href="#" class="text-primary mr-2" data-target="#ticket-modal-{{ ticket.id }}" data-toggle="modal">
+                                            {% include 'app/webkit/Modals/ticketModal.html' with ticket=ticket %}
+                                            <i class="las la-pen"></i>
+                                        </a> {% endcomment %}
+                                        {% if ticket.document %}
+                                        <a href="{{ ticket.document.url }}" target="_blank" class="text-info">
+                                            <i class="las la-paperclip"></i>
+                                        </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center py-5">
+                                        <i class="las la-ticket-alt display-4 text-muted mb-3"></i>
+                                        <h4>No tickets found</h4>
+                                        <p class="text-muted">Create your first ticket by clicking the "New Ticket" button</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Custom ticket status badges */
+    .ticket-status-badge {
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        text-transform: capitalize;
+    }
+    
+    .badge-open {
+        background-color: #e3f2fd;
+        color: #1976d2;
+    }
+    
+    .badge-in_progress {
+        background-color: #fff8e1;
+        color: #ff8f00;
+    }
+    
+    .badge-resolved {
+        background-color: #e8f5e9;
+        color: #388e3c;
+    }
+    
+    .badge-closed {
+        background-color: #f5f5f5;
+        color: #616161;
+    }
+    
+    /* Ticket card hover effect */
+    .card-height {
+        transition: all 0.3s ease;
+    }
+    
+    .card-height:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+</style>
+
+{% endblock %}

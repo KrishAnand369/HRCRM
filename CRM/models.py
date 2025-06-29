@@ -236,4 +236,20 @@ class Estimate(models.Model):
 
     def __str__(self):
         return f"Estimate for {self.project.name} - {self.status}"
+    
+class Ticket(models.Model):
+    STATUS_CHOICES = [
+        ('Created','Created'),
+        ('Assigned', 'Assigned'),
+        ('Pending', 'Pending'),
+        ('Solved', 'Solved'),
+    ]
+
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='client_tickets')
+    topic = models.CharField(max_length=200)
+    description = models.TextField()
+    assigned_employee = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_tickets')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Created')
+    created_at = models.DateTimeField(auto_now_add=True)
+    document = models.FileField(upload_to='tickets/%Y/%m/%d/')
         
