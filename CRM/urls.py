@@ -1,7 +1,8 @@
 from django.urls import path
 from . import views
 from CRM.controller import authView
-from CRM.appViews import clientView,projectView,taskView,dashboardView,employeeView,leaveView,teamView,estimateView,ticketView
+from CRM.appViews import clientView,projectView,taskView,dashboardView,employeeView,leaveView,teamView,estimateView,ticketView,eventView
+
 
 app_name ="CRM"
 urlpatterns = [
@@ -56,4 +57,9 @@ urlpatterns = [
     path('tickets/create/', ticketView.ticket_save, name='create_ticket'),
     path('tickets/<int:ticket_id>/edit/', ticketView.ticket_save, name='edit_ticket'),
     path('tickets', ticketView.ticket_list, name='ticket_list'),
+    
+    path('calendar/', eventView.calendar_view, name='calendar'),
+    path('all_events/', eventView.all_events, name='all_events'),
+    path('add_event/', eventView.add_event, name='add_event'),
+
 ]   
