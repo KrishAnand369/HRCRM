@@ -77,6 +77,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'CRM.context_processors.profile_pic_processor',
+                'CRM.context_processors.notification_context',
             ],
         },
     },

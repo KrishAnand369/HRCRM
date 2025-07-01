@@ -236,4 +236,56 @@ class Estimate(models.Model):
 
     def __str__(self):
         return f"Estimate for {self.project.name} - {self.status}"
+    
+class Ticket(models.Model):
+    STATUS_CHOICES = [
+        ('Created','Created'),
+        ('Assigned', 'Assigned'),
+        ('Pending', 'Pending'),
+        ('Solved', 'Solved'),
+    ]
+
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='client_tickets')
+    topic = models.CharField(max_length=200)
+    description = models.TextField()
+    assigned_employee = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_tickets')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Created')
+    created_at = models.DateTimeField(auto_now_add=True)
+    document = models.FileField(upload_to='tickets/%Y/%m/%d/')
         
+class Event(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_events')
+    is_global = models.BooleanField(default=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='personal_events')
+    
+    class Meta:
+        ordering = ['start_time']
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def event_color(self):
+        if self.is_global:
+            return 'purple'
+        return 'blue'
+    
+from django.db import models
+from django.contrib.auth.models import User
+from django.utils import timezone
+
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.CharField(max_length=255)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.message}"

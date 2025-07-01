@@ -4,7 +4,8 @@ from django.contrib.auth.decorators import login_required
 from CRM.models import UserProfile,Client,Estimate,Project
 from CRM.controller import authView
 from django.db.models import Q  # For complex queries (search functionality)
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger  # For pagination
+# from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger  # For pagination
+from CRM.utils import notify_user
 
 
 
@@ -49,6 +50,8 @@ def estimate_save(request, estimate_id=None):
                     estimate.save()
                 
             messages.success(request, 'Estimate saved successfully!')
+            notify_user(request.user, "Estimate for Client "+ client.company_name + " is created")
+            notify_user(client.user,  "new estimate is created for you")
             return redirect('CRM:estimates')
             
         except (Client.DoesNotExist, Project.DoesNotExist) as e:
@@ -95,16 +98,16 @@ def estimate_list(request):
             Q(notes__icontains=search)
         )
     
-    # Pagination
-    page = request.GET.get('page', 1)
-    paginator = Paginator(estimates, 25)  # Show 25 estimates per page
+    # # Pagination
+    # page = request.GET.get('page', 1)
+    # paginator = Paginator(estimates, 25)  # Show 25 estimates per page
     
-    try:
-        estimates = paginator.page(page)
-    except PageNotAnInteger:
-        estimates = paginator.page(1)
-    except EmptyPage:
-        estimates = paginator.page(paginator.num_pages)
+    # try:
+    #     estimates = paginator.page(page)
+    # except PageNotAnInteger:
+    #     estimates = paginator.page(1)
+    # except EmptyPage:
+    #     estimates = paginator.page(paginator.num_pages)
     
     context = {
         'estimates': estimates,

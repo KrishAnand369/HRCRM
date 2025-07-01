@@ -58,7 +58,8 @@
                             <p class="mb-3">{{ client.user.email }}</p>
                             <ul class="list-unstyled mb-3">
                                 <li class="bg-secondary-light rounded-circle iq-card-icon-small mr-4"><i class="ri-mail-open-line m-0"></i></li>
-                                <li class="bg-primary-light rounded-circle iq-card-icon-small mr-4"><i class="ri-chat-3-line m-0"></i></li>
+                                <a href = "{% url 'private-chat' username=client.user.username %}">
+                                <li class="bg-primary-light rounded-circle iq-card-icon-small mr-4"><i class="ri-chat-3-line m-0"></i></li></a>
                                 {% comment %} <li class="bg-success-light rounded-circle iq-card-icon-small"><i class="ri-phone-line m-0"></i></li> {% endcomment %}
                             </ul>                                    
                             <div class="pt-3 border-top">

@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from CRM.models import UserProfile,Client,Project
 from CRM.controller import authView
+from CRM.utils import notify_user
 
 
 @login_required
@@ -68,6 +69,8 @@ def project_save(request, project_id=None):
             project.client_id = client_id
             project.assigned_users.set(assigned_users)
             project.save()
+            for user in project.assigned_users:
+                notify_user(user.user, name +"Project detailes have been updated")
         else:  # Create new project
             project = Project.objects.create(
                 name=name,
@@ -78,6 +81,8 @@ def project_save(request, project_id=None):
                 client_id=client_id,
             )
             project.assigned_users.set(assigned_users)
+            for user in project.assigned_users:
+                notify_user(user.user, "You have been added to new Project:"+name)
 
         return redirect('CRM:project')
     profile = UserProfile.objects.get(user=request.user)

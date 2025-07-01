@@ -1,0 +1,95 @@
+<div class="modal fade" role="dialog" aria-modal="true" id="ticket-modal-{% if ticket %}{{ ticket.id }}{% else %}new{% endif %}">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header  text-center pb-3 border-bottom">
+                <h3 class="modal-title">{% if ticket %}Edit ticket{% else %}New ticket{% endif %}</h3>
+                {% if ticket %}
+                {% else %}
+                <a href="#" class="svg-icon" data-dismiss="modal">                        
+                    <svg class="svg-icon" width="35" height="35" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 18 18 6M6 6l12 12"></path>
+                        
+                    </svg>
+                </a>
+                {% endif %}
+            </div>
+            <form method="POST" action="{% if ticket and ticket.id %}{% url 'CRM:edit_ticket' ticket.id %}{% else %}{% url 'CRM:create_ticket' %}{% endif %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group mb-3">
+                                <label for="topic" class="h5">Topic*</label>
+                                {% if userRole == 'client' %}
+                                <input type="text" class="form-control" id="topic" name="topic" value="{% if ticket %}{{ ticket.topic }}{% endif %}" placeholder="ticket topic">
+                                {% else%}
+                                <input type="text" class="form-control" id="topic" name="topic" value="{% if ticket %}{{ ticket.topic }}{% endif %}" placeholder="ticket topic" readonly>
+                                {% endif%}
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group mb-3">
+                                <label for="description" class="h5">Description*</label>
+                                {% if userRole == 'client' %}
+                                <textarea class="form-control" id="description" name="description" placeholder="ticket Description">{% if ticket %}{{ ticket.description }}{% endif %}</textarea>
+                                {% else%}
+                                <textarea class="form-control" id="description" name="description" placeholder="ticket Description" readonly>{% if ticket %}{{ ticket.description }}{% endif %}</textarea>
+                                {% endif%}
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <label for="client" class="h5">Client</label>
+                                <select name="client" class="form-control" disabled>
+                                    {% if ticket and ticket.client %}
+                                        <option value="{{ ticket.client.id }}" selected>
+                                            {{ ticket.client.company_name }}
+                                        </option>
+                                    {% else %}
+                                        <option value="{{ profile.id }}" selected>{{ profile.company_name}}</option>
+                                    {% endif %}
+                                </select>
+                                <input type="hidden" name="client" value="{% if ticket and ticket.client %}{{ ticket.client.id }}{% endif %}">
+                            </div>
+                        </div>
+
+
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <label for="status" class="h5">Status *</label>
+                                <select name="status" class="form-control">
+                                    <option value="Created" {% if ticket.status == "Created" %}selected{% endif %}>Created</option>
+                                    <option value="Assigned" {% if ticket.status == "Assigned" %}selected{% endif %}>Assigned</option>
+                                    <option value="Pending" {% if ticket.status == "Pending" %}selected{% endif %}>Pending</option>
+                                    <option value="Solved" {% if ticket.status == "Solved" %}selected{% endif %}>Solved</option>
+                                </select>
+                            </div>
+                        </div>
+                        {% if user.is_superuser %}
+                        <div class="col-lg-12">
+                            <div class="form-group mb-3">
+                                <label for="assignMember" class="h5">Assign Member*</label>
+                                <select name="assignMember" id="assignMember" class="form-control" multiple>
+                                    {% for user in employees %}
+                                        <option class = "mt-1" value="{{ user.id }}" {% if user in ticket.assigned_employee.all %}selected{% endif %}
+                                            style="{% if user.user.profile.is_clocked_in %}color: #0FFF50;{% endif %}">
+                                                {{ user.user.username }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    {% endif %}
+                        <div class="col-lg-12">
+                            <div class="d-flex flex-wrap align-items-center justify-content-center mt-2">
+                                <button type="submit" class="btn btn-primary mr-3">Save</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

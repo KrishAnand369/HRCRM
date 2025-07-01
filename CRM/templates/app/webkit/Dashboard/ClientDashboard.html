@@ -10,17 +10,9 @@
             <div class="card-body">
                 <div class="top-block d-flex align-items-center justify-content-between">
                     <h5>Hi,</h5>
-                    {% comment %} <span class="badge badge-warning">Anual</span> {% endcomment %}
                 </div>
                 <h3 class="text-pink">{{ request.user }}</h3>
                 <h4 class="text-success">Welcome to TeamSync</h4>
-                {% comment %} <div class="d-flex align-items-center justify-content-between mt-1">
-                    <p class="mb-0">Completed</p>
-                    <span class="text-warning">35%</span>
-                </div> 
-                <div class="iq-progress-bar bg-warning-light mt-2">
-                    <span class="bg-warning iq-progress progress-1" data-percent="35"></span>
-                </div>{% endcomment %}
             </div>
         </div>
     </div>
@@ -29,7 +21,6 @@
             <div class="card-body">
                 <div class="top-block d-flex align-items-center justify-content-between">
                     <h5>Total Projects</h5>
-                    {% comment %} <span class="badge badge-warning">Anual</span> {% endcomment %}
                 </div>
                 <h3><span class="counter">{{ project.total }}</span></h3>
                 <div class="d-flex align-items-center justify-content-between mt-1">
@@ -47,7 +38,6 @@
             <div class="card-body">
                 <div class="top-block d-flex align-items-center justify-content-between">
                     <h5>Total Tasks</h5>
-                    {% comment %} <span class="badge badge-success">Today</span> {% endcomment %}
                 </div>
                 <h3><span class="counter">{{ task.total }}</span></h3>
                 <div class="d-flex align-items-center justify-content-between mt-1">
@@ -174,11 +164,13 @@
         <div class="card card-block card-stretch card-height">
             <div class="card-body">
                 <div class="card border-bottom pb-2 shadow-none">
-                    <div class="card-body text-center inln-date flet-datepickr">
-                        <input type="text"  id="inline-date" class="date-input basicFlatpickr d-none" readonly="readonly">
-                    </div>
+                    <a href="{% url 'CRM:calendar' %}"> 
+                        <div class="card-body text-center inln-date flet-datepickr">
+                            <input type="text"  id="inline-date" class="date-input basicFlatpickr d-none" readonly="readonly">
+                        </div>
+                    </a>
                 </div>
-                <div class="card card-list">
+                {% comment %} <div class="card card-list">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <svg class="svg-icon text-warning mr-3" width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -187,7 +179,7 @@
                             <div class="pl-3 border-left">
                                 <h5 class="mb-1">Private Notes</h5>
                                 <p class="mb-0">Unveling the design system</p>
-                            </div>
+                            </div> 
                         </div>
                     </div>
                 </div>
@@ -203,7 +195,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> {% endcomment %}
             </div>
         </div>
     </div>

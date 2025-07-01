@@ -1,0 +1,140 @@
+{% extends 'app/webkit/main.html' %}
+{% load static %}
+
+{% block content %}
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+
+<div class="container w-75 h-75">
+    <div id="calendar"></div>
+</div>
+
+<!-- Event Modal -->
+<div class="modal fade bd-example-modal-lg" role="dialog" aria-modal="true" id="eventModal">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header d-block text-center pb-3 border-bttom">
+                <h3 class="modal-title" id="exampleModalCenterTitle03">New Event</h3>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group mb-3">
+                            <label for="eventTitle" class="h5">Event Title</label>
+                            <input type="text" class="form-control" id="eventTitle" placeholder="Enter event title">
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group mb-3">
+                            <label for="startTime" class="h5">Start Time</label>
+                            <input type="datetime-local" class="form-control" id="startTime">
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group mb-3">
+                            <label for="endTime" class="h5">End Time</label>
+                            <input type="datetime-local" class="form-control" id="endTime">
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="form-group mb-3">
+                            <label for="eventDescription" class="h5">Description</label>
+                            <textarea class="form-control" id="eventDescription" rows="2" placeholder="Event description"></textarea>
+                        </div>
+                    </div>
+                    {% if user.is_staff %}
+                    <div class="col-lg-12">
+                        <div class="form-group mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="isGlobal">
+                                <label class="form-check-label h5" for="isGlobal">
+                                    Global Event (visible to all users)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="col-lg-12">
+                        <div class="d-flex flex-wrap align-items-ceter justify-content-center mt-4">
+                            <button class="btn btn-primary mr-3" id="saveEventBtn">Save</button>
+                            <button class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        events: '/all_events/',
+        editable: false,
+        selectable: true,
+        dateClick: function(info) {
+            // Set default times when clicking on a date
+            var start = new Date(info.date);
+            var end = new Date(info.date);
+            end.setHours(end.getHours() + 1);
+            
+            document.getElementById('startTime').value = start.toISOString().slice(0, 16);
+            document.getElementById('endTime').value = end.toISOString().slice(0, 16);
+            
+            // Clear previous inputs
+            document.getElementById('eventTitle').value = '';
+            document.getElementById('eventDescription').value = '';
+            if (document.getElementById('isGlobal')) {
+                document.getElementById('isGlobal').checked = false;
+            }
+            
+            var modal = new bootstrap.Modal(document.getElementById('eventModal'));
+            modal.show();
+        },
+        eventClick: function(info) {
+            alert('Event: ' + info.event.title + '\nDescription: ' + info.event.extendedProps.description);
+        }
+    });
+    calendar.render();
+
+    document.getElementById('saveEventBtn').addEventListener('click', function() {
+        var eventData = {
+            'title': document.getElementById('eventTitle').value,
+            'description': document.getElementById('eventDescription').value,
+            'start_time': document.getElementById('startTime').value,
+            'end_time': document.getElementById('endTime').value,
+            'is_global': document.getElementById('isGlobal') ? document.getElementById('isGlobal').checked : false
+        };
+        
+        fetch('/add_event/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(eventData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                calendar.refetchEvents();
+                var modal = bootstrap.Modal.getInstance(document.getElementById('eventModal'));
+                modal.hide();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            alert('Error: ' + error);
+        });
+    });
+});
+</script>
+{% endblock %}
