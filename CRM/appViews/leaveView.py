@@ -3,10 +3,11 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from CRM.models import UserProfile,Client,Project,LeaveApplication
 from CRM.controller import authView
+from CRM.utils import notify_user
 
 
 @login_required
-def apply_leave_list(request):  # Get the selected status
+def leave_application_list(request):  # Get the selected status
     profile = UserProfile.objects.get(user=request.user)
     userRole = authView.get_user_role(request.user)
     if request.user.is_superuser:
@@ -33,15 +34,13 @@ def my_applications(request):  # Get the selected status
 
 @login_required
 def apply_leave(request):
-    project = None
     profile = UserProfile.objects.get(user=request.user)
     if request.method == 'POST':
         to = request.POST.get('to')
         reason = request.POST.get('reason')
         date = request.POST.get('date')
         notes = request.POST.get('notes') 
-        documents = request.FILES.get('documents') 
-        assigned_users = request.POST.getlist('assignMembers')
+        documents = request.FILES.get('documents')
 
          # Create new project
         LeaveApplication.objects.create(
@@ -53,6 +52,8 @@ def apply_leave(request):
             notes=notes,
             to_admin =to,
         )
+        
+        notify_user(to.user, "Employee" +request.user.username +"has applied for a leave")
         return redirect('CRM:userprofile')
     return redirect('/profile')
 
@@ -68,7 +69,7 @@ def approve_leave(request, leave_id):
         leave_application.status = 'approved'
         try:
             leave_application.save()
-            print("Leave application approved successfully.")
+            notify_user(leave_application.employee.user, "Your leave application was Approved")
         except Exception as e:
             print(f"Error saving leave application: {e}")
     # Redirect back to the leave application list
@@ -86,6 +87,7 @@ def decline_leave(request, leave_id):
         try:
             leave_application.save()
             print("Leave application rejecTed.")
+            notify_user(leave_application.employee.user, "Your leave application was rejected")
         except Exception as e:
             print(f"Error saving leave application: {e}")
     # Redirect back to the leave application list
@@ -97,14 +99,14 @@ def save_commend_leave(request, leave_id):
     # Retrieve the leave application or return 404 if not found
     leave_application = get_object_or_404(LeaveApplication, id=leave_id)
     
-    # Check if the user is an admin or has permission to comment
+    # Check if the user is an admin 
     if request.user.is_superuser or request.user == leave_application.to_admin.user:
         # Update the comment
         admin_comment= request.POST.get('comment')
         leave_application.admin_comment = admin_comment
         try:
             leave_application.save()
-            print("Leave application comment made.")
+            notify_user(leave_application.employee.user, "admin made a commend on your leave application")
         except Exception as e:
             print(f"Error saving leave application: {e}")
     # Redirect back to the leave application list

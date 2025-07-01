@@ -8,15 +8,16 @@ from decimal import Decimal
 from .models import InvoiceItem, Invoice
 from CRM.models import Client
 from CRM.controller import authView
+from CRM.utils import notify_user
 
 @login_required
 def create_invoice(request):
     if request.method == 'POST':
         try:
-            # Debug: Print all POST data
+            
             print("POST data:", request.POST)
             
-            # Extract and validate main invoice data
+            
             client_id = request.POST.get('client_id')
             due_date_str = request.POST.get('due_date')
             status = request.POST.get('status', 'draft')
@@ -70,6 +71,7 @@ def create_invoice(request):
             update_invoice_totals(invoice)
             
             messages.success(request, 'Invoice created successfully!')
+            notify_user(client.user,"you have a new invoice with No: "+ invoice.invoice_number)
             return redirect('invoices:invoice_list')
             
         except Exception as e:

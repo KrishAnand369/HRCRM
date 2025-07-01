@@ -1,0 +1,31 @@
+{% extends 'app/webkit/main.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between mb-3">
+        <h2>Your Notifications</h2>
+        <a href="{% url 'CRM:mark_all_read' %}" class="btn btn-sm btn-outline-secondary">
+            Mark All as Read
+        </a>
+    </div>
+
+    <div class="list-group">
+        {% for notification in notifications %}
+        <div class="list-group-item {% if not notification.is_read %}list-group-item-primary{% endif %}">
+            <div class="d-flex justify-content-between">
+                <p class="mb-1">{{ notification.message }}</p>
+                <small>{{ notification.created_at|timesince }} ago</small>
+            </div>
+            <div class="text-end">
+                {% if not notification.is_read %}
+                <a href="{% url 'CRM:mark_read' notification.pk %}" 
+                   class="btn btn-sm btn-outline-success">Mark Read</a>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="alert alert-info">No notifications</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

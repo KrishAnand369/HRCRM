@@ -53,6 +53,7 @@ def add_event(request):
                 event.user = request.user
             
             event.save()
+            
             return JsonResponse({'status': 'success', 'event_id': event.id})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
