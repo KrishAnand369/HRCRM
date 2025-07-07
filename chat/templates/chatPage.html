@@ -1,49 +1,298 @@
-<!DOCTYPE html>
-<html>
-  <body>
-    <center><h1>Hello , Welcome to my chat site ! {{request.user}}</h1></center>
-    <br>
-    {% if request.user.is_authenticated  %}
-    {% comment %} <center> Logout the chat Page <a href = "{% url 'logout-user' %}">Logout</a></center> {% endcomment %}
-    {% endif %}
-    <div
-      class="chat__item__container"
-      id="id_chat_item_container"
-      style="font-size: 20px"
-    >
-      <br />
-      <input type="text" id="id_message_send_input" />
-      <button type="submit" id="id_message_send_button">Send Message</button>
-      <br />
-      <br />
+<!-- chat/templates/chat/private_chat.html -->
+{% extends 'app/webkit/main.html' %}
+{% load static %}
+{% block title %} Chat with {{ other_user.username }}{% endblock %}
+
+{% block content %}
+
+<div id="chat-container"class="d-flex gap-2">
+    <div id="chat-list-block" >
+        <h2 class="text-center text-white">Chats </h2>
+        <div class="data-scrollbar" data-scroll="1">
+            <nav class="">
+                <h5 class ="text-blue"> Users </h5>
+                <ul id="" class="list-unstyled">
+                    {% for employee in employees %}
+                                <li class="py-2 px-3 mb-2 rounded">
+                                    <a href="{% url 'private-chat' username=employee.user.username %}" class="d-flex align-items-center text-decoration-none text-dark">                        
+                                        {% if employee.profile_pic  %}
+                                            <img src="{{ employee.profile_pic.url }}" class="rounded-circle me-3" width="40" height="40" alt="Profile">
+                                        {% else %}
+                                            <img src="{% static 'webkit/assets/images/user/02.jpg' %}" class="rounded-circle me-3" width="40" height="40" alt="Default">
+                                        {% endif %}
+                                        <span class="ml-4 fw-bold">{{ employee.user.username }}</span>
+                                        {% if employee.user.profile.is_clocked_in %}
+                                            <span class="ml-4 text-green text-sm">(online)</span>
+                                        {% endif%}
+
+                                    </a>
+                                </li>
+                    {% empty %}
+                        <h4>No Employees added yet for chat.</h4>
+                    {% endfor %}
+                </ul>
+                {% if userRole != 'client' %}
+                    <h5 class ="text-blue"> Clients </h5>
+                    <ul id="" class="list-unstyled">
+                        {% comment %} {% include 'chat/modal.html' %} {% endcomment %}
+                        {% for client in clients %}
+                                    <li class="py-2 px-3 mb-2 rounded">
+                                        <a href="{% url 'private-chat' username=client.user.username %}" class="d-flex align-items-center text-decoration-none text-dark">                        
+                                            {% if client.company_logo  %}
+                                                <img src="{{ client.company_logo.url }}" class="rounded-circle me-3" width="40" height="40" alt="Logo">
+                                            {% endif %}
+                                            <span class="ml-4 fw-bold">{{ client.user.username }} ( {{client.company_name}})</span>
+                                        </a>
+                                    </li>
+                        {% empty %}
+                            <h6>No Clients added yet for chat.</h6>
+                        {% endfor %}
+                    </ul>
+                {% endif %}    
+            </nav>
+        </div>        
     </div>
-    <script>
-      const chatSocket = new WebSocket("ws://" + window.location.host + "/");
-      chatSocket.onopen = function (e) {
-        console.log("The connection was setup successfully !");
-      };
-      chatSocket.onclose = function (e) {
-        console.log("Something unexpected happened !");
-      };
-      document.querySelector("#id_message_send_input").focus();
-      document.querySelector("#id_message_send_input").onkeyup = function (e) {
-        if (e.keyCode == 13) {
-          document.querySelector("#id_message_send_button").click();
-        }
-      };
-      document.querySelector("#id_message_send_button").onclick = function (e) {
-        var messageInput = document.querySelector(
-          "#id_message_send_input"
-        ).value;
-        chatSocket.send(JSON.stringify({ message: messageInput, username : "{{request.user.username}}"}));
-      };
-      chatSocket.onmessage = function (e) {
+    <div id="chat-block">
+        <div id="chat-log">
+            {% if  other_user %}
+                <h3 class="text-center text-white">Private Chat with {{ other_user.username }}</h3>
+            {% else %}
+                <h3 class="text-center text-white">Private Chat </h3>
+                <h6 class=" text-white">Please select a user to start chatting.<h6>
+            {% endif%}
+            {% for message in messages %}
+                <div class="message {% if message.sender == request.user %}message-right{% else %}message-left{% endif %}">
+                    <div class="message-content">
+                        {{ message.message }}
+                        <div class="timestamp">{{ message.timestamp|date:"H:i" }}</div> <!-- Add timestamp here -->
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <br>
+        <div class="chat-input-container">
+            <input type="text" id="chat-message-input" placeholder="Type your message...">
+            <button id="chat-message-submit">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="#0ff808" viewBox="0 0 24 24" stroke-width="1.0" stroke="currentColor" class="size-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+{% comment %} <input type="text" id="chat-message-input" placeholder="Type your message...">
+<button id="chat-message-submit">Send</button> {% endcomment %}
+
+<style>
+/* Chat container split */
+#chat-container {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* Left chat list block */
+#chat-list-block {
+    flex: 0 0 250px;
+    min-width: 0;
+    max-height: 500px;
+    overflow-y: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 0.75rem;
+    padding: 1rem;
+}
+
+#chat-list-block h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: #fff;
+}
+
+#chat-list-block li {
+    transition: background-color 0.2s ease;
+}
+
+#chat-list-block li:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Chat block (right side) */
+#chat-block {
+    flex: 1 1 0;     
+    min-width: 0;    
+    display: flex;
+    flex-direction: column;
+    height: 500px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+/* Chat header */
+#chat-log h3, #chat-log h6 {
+    margin: 0.5rem 0;
+}
+
+/* Chat log (messages) */
+#chat-log {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Individual message bubbles */
+.message {
+    max-width: 70%;
+    min-width: 0;
+    padding: 0.5rem 0.75rem;
+    border-radius: 1rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    position: relative;
+}
+
+
+.message-left {
+    align-self: flex-start;
+    background-color: #0d6efd; /* Bootstrap primary */
+    color: #fff;
+}
+
+.message-right {
+    align-self: flex-end;
+    background-color: #198754; /* Bootstrap success */
+    color: #fff;
+}
+
+/* Timestamp */
+.timestamp {
+    position: absolute;
+    bottom: -1rem;
+    right: 0.5rem;
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Input area */
+.chat-input-container {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255,255,255,0.2);
+}
+
+#chat-message-input {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 2rem;
+    outline: none;
+    background-color: rgba(255,255,255,0.9);
+}
+
+#chat-message-submit {
+    margin-left: 0.5rem;
+    background-color: transparent;
+    border: none;
+    color: #0ff808;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+#chat-message-submit:hover {
+    background-color: rgba(0, 255, 128, 0.2);
+}
+</style>
+
+
+<script>
+    const roomName = "{{ room.name }}";
+    const chatSocket = new WebSocket(
+        `ws://${window.location.host}/ws/chat/${roomName}/`
+    );
+
+    // Debugging: Log WebSocket connection status
+    chatSocket.onopen = function (e) {
+        console.log('WebSocket connection established');
+    };
+
+    chatSocket.onmessage = function (e) {
+        console.log('Message received:', e.data);  // Debugging
         const data = JSON.parse(e.data);
-        var div = document.createElement("div");
-        div.innerHTML = data.username + " : " + data.message;
-        document.querySelector("#id_message_send_input").value = "";
-        document.querySelector("#id_chat_item_container").appendChild(div);
-      };
-    </script>
-  </body>
-</html>
+        const messageElement = document.createElement('div');
+
+        // Determine message alignment based on sender
+        if (data.sender === "{{ request.user.username }}") {
+            messageElement.className = 'message message-right';
+        } else {
+            messageElement.className = 'message message-left';
+        }
+
+        // Format the timestamp
+        const timestamp = new Date(data.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        // Add message content and timestamp
+        messageElement.innerHTML = `
+            <div class="message-content">
+                ${data.message}
+            </div>
+        `;
+
+        // Append message to chat log
+        document.querySelector('#chat-log').appendChild(messageElement);
+
+        // Scroll to the bottom of the chat log
+        const chatLog = document.querySelector('#chat-log');
+        chatLog.scrollTop = chatLog.scrollHeight;
+    };
+
+    chatSocket.onclose = function (e) {
+        console.error('WebSocket connection closed unexpectedly');
+    };
+
+    chatSocket.onerror = function (e) {
+        console.error('WebSocket error:', e);
+    };
+
+    // Send message when the Send button is clicked
+    document.querySelector('#chat-message-submit').onclick = function (e) {
+        const messageInput = document.querySelector('#chat-message-input');
+        const message = messageInput.value;
+
+        if (message.trim() === "") {
+            console.error('Message is empty');
+            return;
+        }
+
+        if (chatSocket.readyState === WebSocket.OPEN) {
+            console.log('Sending message:', message);  // Debugging
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'sender': "{{ request.user.username }}",
+                'timestamp': new Date().toISOString() // Include timestamp in the message
+            }));
+            messageInput.value = '';
+        } else {
+            console.error('WebSocket is not open.');
+        }
+    };
+
+    // Send message when Enter key is pressed
+    document.querySelector('#chat-message-input').onkeyup = function (e) {
+        if (e.keyCode === 13) {  // Enter key
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+</script>
+{% block alerts %}{%endblock %} {% comment %} override alert block to avoid messages coming as alerts {% endcomment %}
+{% endblock %}

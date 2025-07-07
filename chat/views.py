@@ -30,11 +30,13 @@ def private_chat(request, username=None):
         project_users = UserProfile.objects.filter(assigned_projects__in=projects)
         superuser_profiles = UserProfile.objects.filter(user__is_superuser=True)
         employees = (project_users | superuser_profiles).distinct()
+        clients = None
     else:
         profile = UserProfile.objects.get(user=request.user)
         employees= UserProfile.objects.all().exclude(user=request.user)
         superuser_profiles = UserProfile.objects.filter(user__is_superuser=True).exclude(user=request.user)
         employees = employees.union(superuser_profiles)
+        clients = Client.objects.all()
         if not request.user.is_superuser:
             # Step 1: Get all teams the employee is part of
             teams = Team.objects.filter(Q(members=profile) | Q(leader=profile))
@@ -54,6 +56,8 @@ def private_chat(request, username=None):
             # Step 4: Convert the set back to a list for the template
             
             employees=list(teammates)
+            projects_with_user = Project.objects.filter(assigned_users=profile)
+            clients = Client.objects.filter(projects__in=projects_with_user).distinct()
     if username:          
         other_user = get_object_or_404(User, username=username)
         room = get_or_create_private_chat(request.user, other_user)
@@ -63,13 +67,14 @@ def private_chat(request, username=None):
          messages = None
          other_user = None
 
-    return render(request, 'chat/timeMessage.html', {
+    return render(request, 'chatPage.html', {
         'room': room,
         'messages': messages,
         'other_user': other_user,
         'userRole':userRole,
         'profile': profile,
-        'employees':employees
+        'employees':employees,
+        'clients':clients
     })
     #chat/private_chat.html
     
