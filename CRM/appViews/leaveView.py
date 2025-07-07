@@ -27,6 +27,7 @@ def my_applications(request):  # Get the selected status
     userRole = authView.get_user_role(request.user)
     pending_applications = LeaveApplication.objects.filter(employee=profile)  
     context = {
+        'profile': profile,
         'userRole':userRole,
         'leave_applications':pending_applications
     }

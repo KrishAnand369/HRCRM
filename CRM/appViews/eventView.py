@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-from CRM.models import Event
+from CRM.models import Event,UserProfile
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -10,7 +10,8 @@ from django.db.models import Q
 
 @login_required
 def calendar_view(request):
-    return render(request, 'app/webkit/Event/event.html',{'userRole': authView.get_user_role(request.user),})
+    return render(request, 'app/webkit/Event/event.html',{'userRole': authView.get_user_role(request.user),
+        'profile': UserProfile.objects.get(user=request.user),})
 
 @login_required
 def all_events(request):
