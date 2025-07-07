@@ -76,14 +76,18 @@
                         <div class="ticket-status-badge badge-{{ ticket.status }}">
                             {{ ticket.get_status_display }}
                         </div>
-                        {% if userRole != 'client' %}
+                        
                         <div class="d-flex align-items-center">
+                            {% if userRole != 'client' %}
                             <a href="#" class="text-body text-blue" data-target="#ticket-modal-{{ ticket.id }}" data-toggle="modal">
                                 <i class="las la-pen mr-0"></i>
                             </a>
                             {% include 'app/webkit/Modals/ticketModal.html' with ticket=ticket %}
+                            {%else%}
+                            <a href="{% url 'CRM:delete_ticket' ticket.id %}" class="text-body"><i class="las la-trash-alt mr-0"></i></a>
+                            {% endif %}
                         </div>
-                        {% endif %}
+
                     </div>
                     
                     <h5 class="mb-2">{{ ticket.topic }}</h5>

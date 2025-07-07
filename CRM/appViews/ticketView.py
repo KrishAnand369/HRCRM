@@ -118,3 +118,13 @@ def ticket_list(request):
         'profile': profile ,
     }
     return render(request, 'app/webkit/ticket/tickets.html', context)
+
+@login_required
+def delete_ticket(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    if ticket and ticket.client.user == request.user:
+        ticket.delete()
+        messages.success(request, 'Ticket deleted successfully.')
+    else:
+        messages.error(request, 'You do not have permission to delete this ticket.')
+    return redirect('CRM:ticket_list')

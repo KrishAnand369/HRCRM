@@ -73,7 +73,7 @@ def list_teams(request):
     teams = Team.objects.all()
     if not request.user.is_superuser:
         # Assuming `profile` is the logged-in user's profile
-        teams = Team.objects.filter(Q(members=profile) | Q(leader=profile))
+        teams = Team.objects.filter(Q(members=profile) | Q(leader=profile)).distinct()
     context = {
         'userRole':userRole,
         'teams': teams,
@@ -81,3 +81,17 @@ def list_teams(request):
         'profile': profile,
     }
     return render(request,"app/webkit/team/teams.html",context)
+
+@login_required
+def delete_team(request, team_id):
+    if not request.user.is_superuser:
+        messages.error(request, "You do not have permission to delete teams.")
+        return redirect('CRM:list_team')
+    team = get_object_or_404(Team, id=team_id)
+    try:
+        team.delete()
+        messages.success(request, "Team deleted successfully.")
+    except Exception as e:
+        messages.error(request, f"An error occurred while deleting the team: {e}")
+    return redirect('CRM:list_team')
+        

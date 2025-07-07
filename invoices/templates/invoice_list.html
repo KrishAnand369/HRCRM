@@ -109,18 +109,18 @@
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li>
                                             <a class="dropdown-item" href="{% url 'invoices:invoice_detail' invoice.id %}">
-                                                <i class="fas fa-eye me-2"></i>View
+                                                <i class="las la-eye me-2"></i> View
                                             </a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item" href="{% url 'invoices:edit_invoice' invoice.id %}">
-                                                <i class="fas fa-edit me-2"></i>Edit
+                                                <i class="las la-pen me-2"></i> Edit
                                             </a>
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
-                                            <a class="dropdown-item text-danger" href="#">
-                                                <i class="fas fa-trash me-2"></i>Delete
+                                            <a class="dropdown-item text-danger" href="{% url 'invoices:delete_invoice' invoice.id %}">
+                                                <i class="las la-trash me-2"></i> Delete
                                             </a>
                                         </li>
                                     </ul>

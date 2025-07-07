@@ -236,3 +236,13 @@ def mark_invoice_paid(request, pk):
         messages.error(request, f"Error updating invoice: {str(e)}")
         return redirect('invoices:invoice_detail', pk=pk)
  
+@login_required
+def delete_invoice(request, pk):
+    invoice = get_object_or_404(Invoice, pk=pk)
+    try:
+        invoice.delete()
+        messages.success(request, 'Invoice deleted successfully!')
+    except Exception as e:
+        messages.error(request, f"Error deleting invoice: {str(e)}")
+    return redirect('invoices:invoice_list')
+     

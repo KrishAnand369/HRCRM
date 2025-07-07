@@ -25,16 +25,20 @@ urlpatterns = [
     path('projects',projectView.project_list,name='project'),
     path('project/new/', projectView.project_save, name='new_project'),  # Create new project
     path('project/edit/<int:project_id>/', projectView.project_save, name='edit_project'),
+    path('project/delete/<int:project_id>/', projectView.project_delete, name='delete_project'),
     
     path('clients',clientView.client_list,name='clientList'),
     path('client/register/', clientView.client_register, name='client_create'),
     path('client/register/<int:client_id>/', clientView.client_register, name='client_edit'),
+    path('client/<int:client_id>/delete/', clientView.client_delete, name='client_delete'),
     
     path('tasks',taskView.task_list,name='taskList'),
     path('new-task/', taskView.task_register, name='task_create'),
     path('update-task/<int:task_id>/', taskView.update_task, name="update_task"),
+    path('task/<int:task_id>/delete/', taskView.task_delete, name='task_delete'),
     
     path('staffs/',employeeView.employee_list,name='employees'),
+    path('employee/<int:employee_id>/delete',employeeView.employee_delete,name='employee_delete'),
     
     path('apply_leave/',leaveView.apply_leave,name='apply_leave'),
     path('leave_applications/',leaveView.leave_application_list,name='apply_leave_list'),
@@ -48,6 +52,7 @@ urlpatterns = [
     path('team/<int:team_id>/edit_team/', teamView.create_team, name='edit_team'),
     path('team/<int:team_id>/add_member/', teamView.add_member, name='add_member'),
     path('team/<int:team_id>/set_leader/', teamView.set_leader, name='set_leader'),
+    path('team/<int:team_id>/delete/', teamView.delete_team, name='delete_team'),
      
     path('estimates/', estimateView.estimate_list, name='estimates'),
     path('estimates/delete/<int:estimate_id>/', estimateView.delete_estimate, name='delete_estimate'),
@@ -57,6 +62,7 @@ urlpatterns = [
     path('tickets/create/', ticketView.ticket_save, name='create_ticket'),
     path('tickets/<int:ticket_id>/edit/', ticketView.ticket_save, name='edit_ticket'),
     path('tickets', ticketView.ticket_list, name='ticket_list'),
+    path('tickets/<int:ticket_id>/delete/', ticketView.delete_ticket, name='delete_ticket'),
     
     path('calendar/', eventView.calendar_view, name='calendar'),
     path('all_events/', eventView.all_events, name='all_events'),
