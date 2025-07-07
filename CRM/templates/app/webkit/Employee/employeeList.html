@@ -62,21 +62,10 @@
                         <div class="odr-content rounded">                                          
                             <h4 class="mb-2">{{ employee.user.username }}</h4>
                             <p class="mb-3">{{ employee.user.email }}</p>
-                            <!-- Example: Link to start a private chat -->
-                            {% comment %} <a href="{% url 'private-chat' username=employee.user.username %}">
-                                Message {{ employee.user.username }}
-                            </a>
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#chatModal">
-                                Open Chat with {{ employee.user.username }}
-                            </button> {% endcomment %}
-                            {% include 'chat/modal.html' %}
+                            
                             <ul class="list-unstyled mb-3">
-                                {% comment %} <a href="{% url 'private-chat' username=employee.user.username %}"><i class="las la-pen mr-0"></i></a>
-                                <a href="#" class="btn btn-primary" data-target="#chatModal" data-toggle="modal"><i class="las la-pen mr-0"></i></a> {% endcomment %}
                                 <li class="bg-secondary-light rounded-circle iq-card-icon-small mr-4"><i class="ri-mail-open-line m-0"></i></li>
-                                {% comment %} <li class="bg-primary-light rounded-circle iq-card-icon-small mr-4 btn" data-target="#chatModal" data-toggle="modal"><i class="ri-chat-3-line m-0"></i></li> {% endcomment %}
                                 <a href="{% url 'private-chat' username=employee.user.username %}"><li class="bg-primary-light rounded-circle iq-card-icon-small mr-4 btn"><i class="ri-chat-3-line m-0"></i></li><a>
-                                {% comment %} <li class="bg-success-light rounded-circle iq-card-icon-small"><i class="ri-phone-line m-0"></i></li> {% endcomment %}
                             </ul>                                    
                             <div class="pt-3 border-top">
                                 <a href="#" class="btn btn-primary">More</a>
@@ -140,15 +129,4 @@
         </div>
     </div>    
 </div>
-{% comment %} <script>
-    $(document).on('click', '[data-toggle="modal"]', function () {
-        var clientId = $(this).data('client-id');
-        $('#edit-client-modal-' + clientId).modal({ show: true, backdrop: 'static' });
-    });
-
-    $(document).on('click', '.la-pen', function() {
-        var clientId = $(this).data('client-id');
-        $('#edit-client-modal-' + clientId).modal({ show: true, backdrop: 'static' });
-    });
-</script> {% endcomment %}
 {% endblock %}
