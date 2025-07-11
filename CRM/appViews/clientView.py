@@ -62,3 +62,16 @@ def client_list(request):
         clients = Client.objects.filter(projects__in=projects_with_user).distinct()
     return render(request, 'app/webkit/client/clientlist.html',{'userRole':userRole,'profile': profile, 'clients': clients })  
 
+@login_required
+def client_delete(request, client_id):
+    if not request.user.is_superuser:
+        messages.error(request, "You do not have permission to delete clients.")
+        return redirect('CRM:clientList')
+
+    client = get_object_or_404(Client, id=client_id)
+    try:
+        client.delete()
+        messages.success(request, "Client deleted successfully.")
+    except Exception as e:
+        messages.error(request, f"Error deleting client: {str(e)}")
+    return redirect('CRM:clientList')

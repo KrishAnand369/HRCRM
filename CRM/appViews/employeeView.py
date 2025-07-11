@@ -37,3 +37,14 @@ def employee_list(request):
         for employee in employees:
             employee.is_clocked_in = employee.is_clocked_in()  # Call the method to check clock-in status
     return render(request, 'app/webkit/Employee/employeeList.html',{'userRole':userRole,'profile': profile, 'employees': employees })  
+
+@login_required
+def employee_delete(request, employee_id):
+    if not request.user.is_superuser:
+        messages.error(request, "You do not have permission to delete employees.")
+        return redirect('CRM:employees')
+
+    employee = get_object_or_404(UserProfile, id=employee_id)
+    employee.delete()
+    messages.success(request, "Employee deleted successfully.")
+    return redirect('CRM:employees')

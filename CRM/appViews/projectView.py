@@ -1,6 +1,7 @@
 from django.shortcuts import render,get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from CRM.models import UserProfile,Client,Project
 from CRM.controller import authView
 from CRM.utils import notify_user
@@ -92,3 +93,14 @@ def project_save(request, project_id=None):
     return render(request, 'app/webkit/project/projects.html', {
         'users': users, 'clients': clients, 'profile': profile, 'project': project
     })
+
+@login_required
+@staff_member_required
+def project_delete(request, project_id):
+    if project_id:
+        project = get_object_or_404(Project, id=project_id)
+        project.delete()
+        messages.success(request, 'Project deleted successfully.')
+    else:
+        messages.error(request, 'Project not found.')
+    return redirect('CRM:project')

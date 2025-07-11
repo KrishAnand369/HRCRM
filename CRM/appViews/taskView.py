@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from CRM.models import UserProfile,Task,Comment,Checklist,Attachment,Project,Client
 from CRM.controller import authView
 from CRM.utils import notify_user
+from django.contrib import messages
 
 @login_required
 def task_register(request):
@@ -199,3 +200,16 @@ def task_list(request):
         'completed_items':completed_items,
         })
     return render(request,"app/webkit/task/tasks.html",{'userRole':userRole,'profile': profile,'projects':projects,'users':users,'tasks':taskList})
+
+@login_required
+def task_delete(request, task_id):
+    if not request.user.is_superuser:
+        messages.error(request, "You do not have permission to delete task.")
+        return redirect('CRM:taskList')
+    task = get_object_or_404(Task, id=task_id)
+    try:
+        task.delete()
+        messages.success(request, "Task deleted successfully.")
+    except Exception as e:
+        messages.error(request, f"An error occurred while deleting the Task: {e}")
+    return redirect('CRM:taskList')
