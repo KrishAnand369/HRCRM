@@ -78,7 +78,7 @@ def create_invoice(request):
             messages.error(request, f"Error creating invoice: {str(e)}")
             return redirect('invoices:create_invoice')
     
-    # GET request - show empty form
+    # GET request - show create form
     clients = Client.objects.all()
     userRole = authView.get_user_role(request.user)
     return render(request, 'createInvoice.html', {
@@ -92,7 +92,6 @@ def edit_invoice(request, pk):
     
     if request.method == 'POST':
         try:
-            # Extract and validate main invoice data
             client_id = request.POST.get('client_id')
             due_date_str = request.POST.get('due_date')
             

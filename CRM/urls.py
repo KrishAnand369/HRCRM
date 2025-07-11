@@ -7,6 +7,9 @@ from CRM.appViews import clientView,projectView,taskView,dashboardView,employeeV
 app_name ="CRM"
 urlpatterns = [
     path('', views.landing,name='landing'),
+    path('home',views.home,name='home'),
+    path('profile',views.userprofile,name='userprofile'),
+    path('saveprofile/',views.save_profile,name='save_profile'),
     
     path('register/', authView.register, name='register'),
     path('adduser/', authView.createUser, name='createUser'),
@@ -16,11 +19,6 @@ urlpatterns = [
     path('dashboard',dashboardView.dashboard,name='userDashboard'),
     path('clock-in/', dashboardView.clock_in, name='clock_in'),
     path('clock-out/', dashboardView.clock_out, name='clock_out'),
-    
-    
-    path('home',views.home,name='home'),
-    path('profile',views.userprofile,name='userprofile'),
-    path('saveprofile/',views.save_profile,name='save_profile'),
     
     path('projects',projectView.project_list,name='project'),
     path('project/new/', projectView.project_save, name='new_project'),  # Create new project
