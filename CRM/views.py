@@ -2,10 +2,10 @@
 from django.shortcuts import render,get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import UserProfile,Project,Client,User,Task,Checklist,Comment,Attachment
+from .models import UserProfile,Project,SalarySlip,Task,User
 from CRM.controller import authView
-from .projectForm import ProjectForm
 from datetime import datetime
+from django.utils import timezone
 from django.contrib.auth import login, authenticate
 
 def landing(request):
@@ -99,6 +99,51 @@ def save_profile(request):
     return render(request, 'app/webkit/user/user-edit-profile.html', {
         'profile': profile, 'skills': skills, 'education': education,'userRole':userRole
     })
+@login_required
+def employee_salary_slips(request):
+    profile = UserProfile.objects.get(user=request.user)  # Fetch the logged-in user's profile
+    
+    userRole =authView.get_user_role(request.user)
+    slips = SalarySlip.objects.filter(employee=request.user).order_by('-uploaded_at')
+    return render(request, 'app/webkit/user/salary.html', {'profile': profile,'slips': slips,'userRole':userRole})
+
+
+def upload_salary_slip(request):
+    if request.method == 'POST':
+        try:
+            # Get form data directly from request
+            user_id = request.POST.get('user_id')
+            month = request.POST.get('month')
+            salary_slip_file = request.FILES.get('salary_slip')
+            
+            # Basic validation
+            if not all([user_id, month, salary_slip_file]):
+                messages.error(request, "All fields are required!")
+                return redirect(request.META.get('HTTP_REFERER'))
+            
+            try:
+                employee = User.objects.get(id=user_id)
+            except User.DoesNotExist:
+                messages.error(request, "Employee not found!")
+                return redirect(request.META.get('HTTP_REFERER'))
+            
+            # Create and save SalarySlip record
+            SalarySlip.objects.create(
+                employee=employee,
+                month=month,
+                slip_file=salary_slip_file,
+                uploaded_at=timezone.now()
+            )
+            
+            messages.success(request, "Salary slip uploaded successfully!")
+            return redirect('CRM:employees')  # Redirect to your list view
+            
+        except Exception as e:
+            messages.error(request, f"Error uploading salary slip: {str(e)}")
+            return redirect('CRM:employees')
+    
+    # For GET requests (optional - if you need to render the form)
+    return redirect('CRM:employees')
 
     profile = UserProfile.objects.get(user=request.user)
     projects =Project.objects.all()
