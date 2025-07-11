@@ -43,8 +43,8 @@ class InvoiceItem(models.Model):
     
     def save(self, *args, **kwargs):
         self.amount = (self.quantity * self.price) * (1 + self.tax_rate / 100)
-        super().save(*args, **kwargs)
-        self.invoice.save()  # This will trigger invoice totals update
+        super().save(*args, **kwargs) 
+        self.invoice.save()  
 
     def __str__(self):
         return f"{self.description} - {self.quantity} x ${self.price}"
