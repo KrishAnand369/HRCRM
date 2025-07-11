@@ -24,7 +24,7 @@ def project_list(request):
     else:
         profile = UserProfile.objects.get(user=request.user)
         if not request.user.is_superuser:
-            projects = projects.filter(assigned_users=profile)
+            projects = projects.filter(assigned_users=profile).exclude(status='Completed')
         
     projects_with_completion = []
     for project in projects:

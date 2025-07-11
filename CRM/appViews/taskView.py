@@ -183,8 +183,8 @@ def task_list(request):
     else:
         profile = UserProfile.objects.get(user=request.user)
         if not request.user.is_superuser:
-            tasks = tasks.filter(assigned_to=profile)
-            projects = projects.filter(assigned_users=profile)
+            tasks = tasks.filter(assigned_to=profile).exclude(status='Completed')
+            projects = projects.filter(assigned_users=profile).exclude(status='Completed')
     taskList= []
     for task in tasks:
         
