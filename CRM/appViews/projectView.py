@@ -70,7 +70,7 @@ def project_save(request, project_id=None):
             project.client_id = client_id
             project.assigned_users.set(assigned_users)
             project.save()
-            for user in project.assigned_users:
+            for user in project.assigned_users.all():
                 notify_user(user.user, name +"Project detailes have been updated")
         else:  # Create new project
             project = Project.objects.create(
@@ -82,7 +82,7 @@ def project_save(request, project_id=None):
                 client_id=client_id,
             )
             project.assigned_users.set(assigned_users)
-            for user in project.assigned_users:
+            for user in project.assigned_users.all():
                 notify_user(user.user, "You have been added to new Project:"+name)
 
         return redirect('CRM:project')

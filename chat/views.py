@@ -74,7 +74,8 @@ def private_chat(request, username=None):
         'userRole':userRole,
         'profile': profile,
         'employees':employees,
-        'clients':clients
+        'clients':clients,
+        'superuser_profiles': superuser_profiles,
     })
     #chat/private_chat.html
     
