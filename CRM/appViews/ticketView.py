@@ -6,6 +6,7 @@ from CRM.models import Ticket,Client,UserProfile
 from CRM.controller import authView
 from django.contrib import messages
 from CRM.utils import notify_user
+from django.urls import reverse
 
 @login_required
 def ticket_save(request, ticket_id=None):
@@ -37,8 +38,8 @@ def ticket_save(request, ticket_id=None):
                     ticket.assigned_employee = get_object_or_404(UserProfile, id=assigned_to_id)
                     if ticket.status == "Created":
                         ticket.status = "Assigned"
-                    notify_user(ticket.assigned_employee.user, "You are assigned with a new Ticket from client:"+ ticket.client.user.username)
-                    notify_user(ticket.client.user, "Your ticket status is assigned to:"+ ticket.assigned_employee.user.username)
+                    notify_user(ticket.assigned_employee.user,reverse('CRM:ticket_list'), "You are assigned with a new Ticket from client:"+ ticket.client.user.username)
+                    notify_user(ticket.client.user,reverse('CRM:ticket_list'), "Your ticket status is assigned to:"+ ticket.assigned_employee.user.username)
                         
                 else:
                     ticket.assigned_employee = None  # Unassign if no user is selected
@@ -47,7 +48,7 @@ def ticket_save(request, ticket_id=None):
                 ticket.status = status
                 if status == "Solved" or status == "Pending":
                     ticket.save()
-                    notify_user(ticket.client.user, "Your ticket status is marked "+ status +" by:"+ ticket.assigned_employee.user.username)
+                    notify_user(ticket.client.user,reverse('CRM:ticket_list'), "Your ticket status is marked "+ status +" by:"+ ticket.assigned_employee.user.username)
                 
             elif ticket and ticket.client.user == request.user:
                 ticket.topic = topic
@@ -64,7 +65,7 @@ def ticket_save(request, ticket_id=None):
                 
                 superuser_profiles = UserProfile.objects.filter(user__is_superuser=True)
                 for adm in superuser_profiles:
-                    notify_user(adm.user, "A new Ticket is raised By:"+ ticket.client.user.username)
+                    notify_user(adm.user,reverse('CRM:ticket_list'), "A new Ticket is raised By:"+ ticket.client.user.username)
                     
                 if ticket_doc:
                     ticket.document = ticket_doc

@@ -13,7 +13,11 @@
         {% for notification in notifications %}
         <div class="list-group-item {% if not notification.is_read %}list-group-item-primary{% endif %}">
             <div class="d-flex justify-content-between">
-                <p class="mb-1">{{ notification.message }}</p>
+                {% if notification.url %}
+                    <a class="mb-1 text-body text-decoration-none" href="{{ notification.url }}">{{ notification.message }}</a>
+                {% else %}
+                    <p class="mb-1">{{ notification.message }}</p>
+                {% endif %}
                 <small>{{ notification.created_at|timesince }} ago</small>
             </div>
             <div class="text-end">

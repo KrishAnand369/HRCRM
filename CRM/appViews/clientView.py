@@ -1,5 +1,6 @@
 from django.shortcuts import render,get_object_or_404, redirect
 from django.contrib import messages
+from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from CRM.models import UserProfile,Client,User,Project
 from CRM.controller import authView
@@ -35,14 +36,14 @@ def client_register(request, client_id=None):
             client.user.save()
             client.save()
             messages.success(request, "Client updated successfully!")
-            notify_user(request.user, "client details is updated")
-            notify_user(client.user, "your details is updated")
+            notify_user(request.user,reverse('CRM:clientList'), "client details is updated")
+            notify_user(client.user, reverse('CRM:userDashboard'),"your details is updated")
         else:
             # Create new client
             user = User.objects.create_user(username=username, email=email, password=password)
             Client.objects.create(user=user, company_name=company_name, company_logo=company_logo, contact_number=contact_number, address=address)
             messages.success(request, "Client registered successfully!")
-            notify_user(request.user, "client for company :"+ company_name +" is created")
+            notify_user(request.user,reverse('CRM:clientList'), "client for company :"+ company_name +" is created")
 
         return redirect('CRM:clientList')
 
