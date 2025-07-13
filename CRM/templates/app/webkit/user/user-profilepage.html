@@ -47,28 +47,32 @@
                   {% if user.is_superuser %}
                   {% else %}
                   <div class="d-flex justify-content-center">
-                     <div class="pl-3 btn-new mb-1 mr-3">
-                         <!-- Dropdown Button -->
-                         <div class="dropdown">
-                             <button class="btn btn-success dropdown-toggle" type="button" id="leaveDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                     <div class="pl-3 btn-new mb-1 mr-3 d-flex align-items-center">
+                        <!-- Dropdown Button -->
+                        <div class="dropdown mr-2">
+                           <button class="btn btn-success dropdown-toggle" type="button" id="leaveDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                  Leave
-                             </button>
-                             <!-- Dropdown Menu -->
-                             <div class="dropdown-menu" aria-labelledby="leaveDropdown">
+                           </button>
+                           <!-- Dropdown Menu -->
+                           <div class="dropdown-menu" aria-labelledby="leaveDropdown">
                                  <!-- Apply for Leave Option -->
                                  <a class="dropdown-item" href="#" data-target="#leave-modal" data-toggle="modal">
-                                     Apply for Leave
+                                    Apply for Leave
                                  </a>
                                  <!-- My Applications Option -->
                                  <a class="dropdown-item" href="{% url 'CRM:my_applications' %}">
-                                     My Applications
+                                    My Applications
                                  </a>
-                             </div>
-                         </div>
-                         <!-- Include the Modal -->
-                         {% include 'app/webkit/Modals/leaveModal.html' %}
+                           </div>
+                        </div>
+                        <!-- Include the Modal -->
+                        {% include 'app/webkit/Modals/leaveModal.html' %}
+                        <!-- Salary Slips Button -->
+                        <a href="{% url 'CRM:employee_salary_slips' %}" class="btn btn-success" role="button">
+                           Salary Slips
+                        </a>
                      </div>
-                 </div>
+                  </div>
                  {% endif %}
                   
                </div>
