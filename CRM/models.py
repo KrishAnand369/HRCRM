@@ -281,6 +281,7 @@ from django.utils import timezone
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     message = models.CharField(max_length=255)
+    url = models.URLField(max_length=500, null=True, blank=True)
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
 

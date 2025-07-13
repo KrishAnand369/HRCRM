@@ -1,4 +1,5 @@
 from django.urls import path
+from . import views
 from .views import (
     create_invoice, edit_invoice,
     invoice_detail, invoice_list,
@@ -17,4 +18,8 @@ urlpatterns = [
     path('<int:pk>/mark_paid/',mark_invoice_paid, name='mark_invoice_paid'),
     path('client/<int:client_id>/details/', get_client_details, name='client_details'),
     path('<int:pk>/delete/', delete_invoice, name='delete_invoice'),
+    
+    path('pay/<int:invoice_id>/', views.create_stripe_checkout_session, name='create_stripe_checkout_session'),
+    path('payment-success/<int:payment_id>/', views.payment_success, name='payment_success'),
+    path('payment-cancel/<int:payment_id>/', views.payment_cancel, name='payment_cancel'),
 ]

@@ -1,14 +1,19 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from datetime import datetime
 from decimal import Decimal
 
-from .models import InvoiceItem, Invoice
-from CRM.models import Client
+from .models import InvoiceItem, Invoice, Payment
+from CRM.models import Client,UserProfile
 from CRM.controller import authView
 from CRM.utils import notify_user
+
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+
+import stripe
 
 @login_required
 def create_invoice(request):
@@ -244,4 +249,69 @@ def delete_invoice(request, pk):
     except Exception as e:
         messages.error(request, f"Error deleting invoice: {str(e)}")
     return redirect('invoices:invoice_list')
+
+
+#Stripe Payment Integration
+
+# views.py
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+def create_stripe_checkout_session(request, invoice_id):
+    invoice = get_object_or_404(Invoice, id=invoice_id)
+
+    # Create a Payment record (pending)
+    payment = Payment.objects.create(
+        invoice=invoice,
+        amount=invoice.total,
+        gateway='stripe',
+        status='pending'
+    )
+
+    if invoice.total < 50:
+        invoice.total = 50  
+        
+    session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=[{
+            'price_data': {
+                'currency': 'inr',
+                'unit_amount': int(invoice.total * 100), 
+                'product_data': {
+                    'name': f'Invoice #{invoice.invoice_number}',
+                },
+            },
+            'quantity': 1,
+        }],
+        mode='payment',
+        success_url=f"{settings.DOMAIN}/invoice/payment-success/{payment.id}/",
+        cancel_url=f"{settings.DOMAIN}/invoice/payment-cancel/{payment.id}/",
+    )
+
+    return redirect(session.url, code=303)
+
+
+def payment_success(request, payment_id):
+    payment = get_object_or_404(Payment, id=payment_id)
+    payment.status = 'success'
+    payment.save()
+
+    invoice = payment.invoice
+    invoice.status = 'paid'
+    invoice.save()
+    superuser_profiles = UserProfile.objects.filter(user__is_superuser=True)
+    for admin in superuser_profiles:
+        notify_user(admin.user,"Invoice No: "+ invoice.invoice_number+" is Paid")
+    return render(request, 'paymentSuccess.html', {'invoice': invoice})
+
+
+def payment_cancel(request, payment_id):
+    payment = get_object_or_404(Payment, id=payment_id)
+    payment.status = 'failed'
+    payment.save()
+    
+    invoice = payment.invoice
+
+    return render(request, 'paymentFailure.html', {'invoice': invoice})
+
      
