@@ -64,25 +64,11 @@
                             <p class="mb-3">{{ employee.user.email }}</p>
                             
                             <ul class="list-unstyled mb-3">
-                                <a href="mailto:{{ employee.user.email }}">
-                                    <li class="bg-secondary-light rounded-circle iq-card-icon-small mr-4">
-                                        <i class="ri-mail-open-line m-0"></i>
-                                    </li>
-                                </a>
-                                <a href="{% url 'private-chat' username=employee.user.username %}">
-                                    <li class="bg-primary-light rounded-circle iq-card-icon-small mr-4 btn">
-                                        <i class="ri-chat-3-line m-0"></i>
-                                    </li>
-                                <a>
+                                <li class="bg-secondary-light rounded-circle iq-card-icon-small mr-4"><i class="ri-mail-open-line m-0"></i></li>
+                                <a href="{% url 'private-chat' username=employee.user.username %}"><li class="bg-primary-light rounded-circle iq-card-icon-small mr-4 btn"><i class="ri-chat-3-line m-0"></i></li><a>
                             </ul>                                    
                             <div class="pt-3 border-top">
-                                {% comment %} <a href="#" class="btn btn-primary">More</a> {% endcomment %}
-                                <div class="pl-3 border-left btn-new">
-                                    <button class="btn btn-primary" data-toggle="modal" data-target="#uploadSalarySlipModal-{{employee.user.id}}">
-                                        Upload Salary Slip
-                                    </button>
-                                    {% include 'app/webkit/Modals/salaryModal.html' with user=employee.user %}
-                                </div>
+                                <a href="#" class="btn btn-primary">More</a>
                             </div>
                         </div>
                     </div>
@@ -114,22 +100,9 @@
                         <td>{{ employee.user.email }}</td>
                         <td>
                             <div class="media align-items-center">
-
-                                <a href="mailto:{{ employee.user.email }}">
-                                    <div class="bg-secondary-light rounded-circle iq-card-icon-small mr-3">
-                                        <i class="ri-mail-open-line m-0"></i>
-                                    </div>
-                                </a>    
-                                <a href="{% url 'private-chat' username=employee.user.username %}">
-                                    <div class="bg-primary-light rounded-circle iq-card-icon-small mr-3">
-                                        <i class="ri-chat-3-line m-0"></i>
-                                    </div>
-                                </a>
-                                <a href="https://wa.me/{{ employee.user.profile.phone_number }}" target="_blank">
-                                    <div class="bg-success-light rounded-circle iq-card-icon-small">
-                                        <i class="ri-phone-line m-0"></i>
-                                    </div>
-                                </a>
+                                <div class="bg-secondary-light rounded-circle iq-card-icon-small mr-3"><i class="ri-mail-open-line m-0"></i></div>
+                                <div class="bg-primary-light rounded-circle iq-card-icon-small mr-3"><i class="ri-chat-3-line m-0"></i></div>
+                                <div class="bg-success-light rounded-circle iq-card-icon-small"><i class="ri-phone-line m-0"></i></div>
                             </div>
                         </td>
                         <td>

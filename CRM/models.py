@@ -289,13 +289,3 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.message}"
-    
-#salarySlip
-class SalarySlip(models.Model):
-    employee = models.ForeignKey(User, on_delete=models.CASCADE)
-    month = models.CharField(max_length=20)
-    slip_file = models.FileField(upload_to='salary_slips/')
-    uploaded_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.employee.username} - {self.month}"
