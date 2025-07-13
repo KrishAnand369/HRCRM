@@ -48,7 +48,26 @@
                             <h6>No Clients added yet for chat.</h6>
                         {% endfor %}
                     </ul>
-                {% endif %}    
+                {% endif %}  
+                {% if userRole != 'client' and not user.is_superuser %}
+                    <h5 class ="text-blue"> Admins </h5>
+                    <ul id="" class="list-unstyled">
+                        {% for employee in superuser_profiles %}
+                                    <li class="py-2 px-3 mb-2 rounded">
+                                        <a href="{% url 'private-chat' username=employee.user.username %}" class="d-flex align-items-center text-decoration-none text-dark">                        
+                                            {% if employee.profile_pic  %}
+                                                <img src="{{ employee.profile_pic.url }}" class="rounded-circle me-3" width="40" height="40" alt="Profile">
+                                            {% else %}
+                                                <img src="{% static 'webkit/assets/images/user/02.jpg' %}" class="rounded-circle me-3" width="40" height="40" alt="Default">
+                                            {% endif %}
+                                            <span class="ml-4 fw-bold">{{ employee.user.username }}</span>
+                                        </a>
+                                    </li>
+                        {% empty %}
+                            <h6>No Admins added yet for chat.</h6>
+                        {% endfor %}
+                    </ul>
+                {% endif %}   
             </nav>
         </div>        
     </div>

@@ -67,8 +67,21 @@
                                 <li class="bg-secondary-light rounded-circle iq-card-icon-small mr-4"><i class="ri-mail-open-line m-0"></i></li>
                                 <a href="{% url 'private-chat' username=employee.user.username %}"><li class="bg-primary-light rounded-circle iq-card-icon-small mr-4 btn"><i class="ri-chat-3-line m-0"></i></li><a>
                             </ul>                                    
-                            <div class="pt-3 border-top">
-                                <a href="#" class="btn btn-primary">More</a>
+
+                            <div class="pt-3 border-top ">
+                                {% if user.is_superuser %}
+                                <div class="pl-3 border-left btn-new">
+                                    <button class="btn btn-primary" data-toggle="modal" data-target="#uploadSalarySlipModal-{{employee.user.id}}">
+                                        Upload Salary Slip
+                                    </button>
+                                    {% include 'app/webkit/Modals/salaryModal.html' with user=employee.user %}
+                                </div>
+                                <div class="pl-3 border-left btn-new mt-2">
+                                    <a href="{% url 'CRM:employee_salary_slips' employee.user.id %}" class="btn btn-success" role="button">
+                                        View Salary Slips
+                                    </a>
+                                </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
