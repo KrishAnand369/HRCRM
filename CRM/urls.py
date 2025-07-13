@@ -11,6 +11,10 @@ urlpatterns = [
     path('profile',views.userprofile,name='userprofile'),
     path('saveprofile/',views.save_profile,name='save_profile'),
     
+    path('upload-salary-slip/', views.upload_salary_slip, name='upload_salary_slip'),
+    path('my-salary-slips/', views.employee_salary_slips, name='employee_salary_slips'),
+    
+    
     path('register/', authView.register, name='register'),
     path('adduser/', authView.createUser, name='createUser'),
     path('login/',authView.loginPage,name='loginpage'),
