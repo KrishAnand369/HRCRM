@@ -2,10 +2,10 @@
 from django.shortcuts import render,get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import UserProfile,Project,Client,User,Task,Checklist,Comment,Attachment,SalarySlip
+from .models import UserProfile,User,SalarySlip,Lead
 from CRM.controller import authView
-from .projectForm import ProjectForm
 from datetime import datetime
+from django.urls import reverse
 
 from django.utils import timezone
 from CRM.utils import notify_user
@@ -163,31 +163,44 @@ def upload_salary_slip(request):
     return redirect('CRM:employees')
 
 
+def contact_form(request):
+    if request.method == 'POST':
+        name = request.POST.get('Name')
+        phone_number = request.POST.get('Phone Number')
+        email = request.POST.get('Email')
+        message = request.POST.get('Message')
+
+        Lead.objects.create(
+            name=name,
+            phone_number=phone_number,
+            email=email,
+            message=message
+        )
+
+        messages.success(request, "Thank you for contacting us! We’ll get back to you soon.")
+        superuser_profiles = UserProfile.objects.filter(user__is_superuser=True)
+        for adm in superuser_profiles:
+            notify_user(adm.user,reverse('CRM:lead_list'),name+" has contacted us through the contact form")
+                  
+    return redirect('CRM:landing')  # Use your contact page URL name
+
+
+
+
+@login_required
+def lead_list(request):
+    profile = UserProfile.objects.get(user=request.user) 
+    userRole =authView.get_user_role(request.user)
+    if request.user.is_superuser:
+        leads = Lead.objects.all().order_by('-created_at')
+    return render(request, 'app/webkit/leadList.html', {'leads': leads,'profile': profile, 'userRole': userRole})
+
+def terms_of_service(request):
+    profile = UserProfile.objects.get(user=request.user) 
+    userRole =authView.get_user_role(request.user)
+    return render(request, 'app/webkit/terms-of-service.html', {'profile': profile, 'userRole': userRole})
+
+def privacy_policy(request):
     profile = UserProfile.objects.get(user=request.user)
-    projects =Project.objects.all()
-    users = UserProfile.objects.all()
-    project_selected=request.GET.get('project_selected')
-    #print("project_selected:"+project_selected)
-    print(project_selected)
-    if project_selected == "All Tasks" or not project_selected:
-        # If 'All projects' is selected or no status is provided
-        print("project_selected: reached")
-        tasks = Task.objects.all()
-    elif project_selected:  # If a specific status is selected
-        tasks = Task.objects.filter(project=project_selected)
-    
-    taskList= []
-    for task in tasks:
-        
-        checklists=task.checklists.all()
-        comments=task.comments.all()
-        attachments=task.attachments.all()
-        completed_items=task.checklists.filter(is_completed = True).count()
-        taskList.append({
-        'task':task,
-        'checklists':checklists,
-        'comments':comments,
-        'attachments':attachments,
-        'completed_items':completed_items,
-        })
-    return render(request,"app/webkit/task/tasks.html",{'profile': profile,'projects':projects,'users':users,'tasks':taskList})
+    userRole =authView.get_user_role(request.user)
+    return render(request, 'app/webkit/privacy-policy.html', {'profile': profile, 'userRole': userRole})

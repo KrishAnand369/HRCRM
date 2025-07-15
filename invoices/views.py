@@ -9,6 +9,7 @@ from .models import InvoiceItem, Invoice, Payment
 from CRM.models import Client,UserProfile
 from CRM.controller import authView
 from CRM.utils import notify_user
+from django.urls import reverse
 
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -76,7 +77,7 @@ def create_invoice(request):
             update_invoice_totals(invoice)
             
             messages.success(request, 'Invoice created successfully!')
-            notify_user(client.user,"you have a new invoice with No: "+ invoice.invoice_number)
+            notify_user(client.user,reverse('invoices:invoice_detail' , args=[invoice.id]),"you have a new invoice with No: "+ invoice.invoice_number)
             return redirect('invoices:invoice_list')
             
         except Exception as e:
@@ -301,7 +302,7 @@ def payment_success(request, payment_id):
     invoice.save()
     superuser_profiles = UserProfile.objects.filter(user__is_superuser=True)
     for admin in superuser_profiles:
-        notify_user(admin.user,"Invoice No: "+ invoice.invoice_number+" is Paid")
+        notify_user(admin.user,reverse('invoices:invoice_detail' , args=[invoice.id]),"Invoice No: "+ invoice.invoice_number+" is Paid")
     return render(request, 'paymentSuccess.html', {'invoice': invoice})
 
 
