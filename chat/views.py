@@ -19,9 +19,6 @@ def chat_room(request, room_name):
     
 @login_required
 def private_chat(request, username=None):
-    """
-    View for private messaging between the logged-in user and another user.
-    """
     
     userRole = authView.get_user_role(request.user) 
     if userRole =='client':

@@ -4,6 +4,7 @@ from CRM.models import UserProfile,Task,Comment,Checklist,Attachment,Project,Cli
 from CRM.controller import authView
 from CRM.utils import notify_user
 from django.contrib import messages
+from django.urls import reverse
 
 @login_required
 def task_register(request):
@@ -38,7 +39,7 @@ def task_register(request):
         assigned_to_id = request.POST.get("assignMembers")
         if assigned_to_id:
             task.assigned_to = get_object_or_404(UserProfile, id=assigned_to_id)
-            notify_user(task.assigned_to.user," You are assiged with a new Task: " + title)
+            notify_user(task.assigned_to.user,reverse('CRM:taskList')," You are assiged with a new Task: " + title)
         else:
             task.assigned_to = None  # Unassign if no user is selected
         task.save()
@@ -48,20 +49,20 @@ def task_register(request):
             if item.strip():  # Ignore empty items
                 Checklist.objects.create(task=task, item=item.strip())
                 if request.user != task.assigned_to.user:
-                    notify_user(task.assigned_to.user," There is a new checkList items in Task: " + title + " from "+ request.user.username)
+                    notify_user(task.assigned_to.user,reverse('CRM:taskList')," There is a new checkList items in Task: " + title + " from "+ request.user.username)
 
         # Add comments
         for comment_text in comments:
             if comment_text.strip():  # Ignore empty comments
                 Comment.objects.create(task=task, user=request.user, text=comment_text.strip())
                 if request.user != task.assigned_to.user:
-                    notify_user(task.assigned_to.user," There is a new Comment in Task: " + title + " from "+ request.user.username)
+                    notify_user(task.assigned_to.user,reverse('CRM:taskList')," There is a new Comment in Task: " + title + " from "+ request.user.username)
 
         # Handle file uploads
         for file in files:
             Attachment.objects.create(task=task, file=file)
             if request.user != task.assigned_to.user:
-                    notify_user(task.assigned_to.user," There is a new Attachment in Task: " + title + " from "+ request.user.username)
+                    notify_user(task.assigned_to.user,reverse('CRM:taskList')," There is a new Attachment in Task: " + title + " from "+ request.user.username)
 
         return redirect('CRM:taskList')  # Redirect to task detail page
         # except Exception as e:
@@ -95,13 +96,13 @@ def update_task(request, task_id):
                 if item.strip():  # Ignore empty items
                     Checklist.objects.create(task=task, item=item.strip())
                     if request.user != task.assigned_to.user:
-                        notify_user(task.assigned_to.user," There is a new checklist items in Task: " + task.name + " from "+ request.user.username)
+                        notify_user(task.assigned_to.user,reverse('CRM:taskList')," There is a new checklist items in Task: " + task.name + " from "+ request.user.username)
                     
             # Update Assigned User
             assigned_to_id = request.POST.get("assigned_to")
             if assigned_to_id:
                 task.assigned_to = get_object_or_404(UserProfile, id=assigned_to_id)
-                notify_user(task.assigned_to.user," You are assiged with a new Task: " + task.name)
+                notify_user(task.assigned_to.user,reverse('CRM:taskList')," You are assiged with a new Task: " + task.name)
             else:
                 task.assigned_to = None  # Unassign if no user is selected
                 
@@ -114,7 +115,7 @@ def update_task(request, task_id):
 
         task.save()
         if task.status == "Completed" :
-            notify_user(task.project.client.user,"Task"+task.name+"is Completed")
+            notify_user(task.project.client.user,reverse('CRM:taskList'),"Task"+task.name+"is Completed")
 
         # Get all checklist items for this task
         all_checklists = Checklist.objects.filter(task=task)
@@ -133,12 +134,12 @@ def update_task(request, task_id):
             if comment_text.strip():  # Ignore empty comments
                 Comment.objects.create(task=task, user=request.user, text=comment_text.strip())
                 if request.user != task.assigned_to.user:
-                    notify_user(task.assigned_to.user," There is a new Comment in Task: " + task.name + " from "+ request.user.username)
+                    notify_user(task.assigned_to.user,reverse('CRM:taskList')," There is a new Comment in Task: " + task.name + " from "+ request.user.username)
                 
         for file in files:
             Attachment.objects.create(task=task, file=file)
             if request.user != task.assigned_to.user:
-                    notify_user(task.assigned_to.user," There is a new Attachment in Task: " + task.name + " from "+ request.user.username)
+                    notify_user(task.assigned_to.user,reverse('CRM:taskList')," There is a new Attachment in Task: " + task.name + " from "+ request.user.username)
             
         
                 

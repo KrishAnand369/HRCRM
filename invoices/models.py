@@ -31,6 +31,12 @@ class Invoice(models.Model):
 
     class Meta:
         ordering = ['-date']
+        
+    @property
+    def paid_date(self):
+        """Return the created_at of the latest successful payment, or None"""
+        last_successful_payment = self.payments.filter(status='success').order_by('-created_at').first()
+        return last_successful_payment.created_at if last_successful_payment else None
 
 class InvoiceItem(models.Model):
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name='items')
@@ -51,3 +57,20 @@ class InvoiceItem(models.Model):
 
     class Meta:
         ordering = ['id']
+        
+class Payment(models.Model):
+    PAYMENT_GATEWAYS = [
+        ('stripe', 'Stripe'),
+        ('paypal', 'PayPal'),
+        ('paytm', 'Paytm'),
+    ]
+
+    invoice = models.ForeignKey('Invoice', on_delete=models.CASCADE, related_name='payments')
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    gateway = models.CharField(max_length=20, choices=PAYMENT_GATEWAYS)
+    transaction_id = models.CharField(max_length=100, blank=True, null=True)
+    status = models.CharField(max_length=20, default='pending')  # pending, success, failed
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.gateway} payment for Invoice #{self.invoice.invoice_number}"

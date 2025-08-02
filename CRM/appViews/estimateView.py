@@ -6,6 +6,7 @@ from CRM.controller import authView
 from django.db.models import Q  # For complex queries (search functionality)
 # from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger  # For pagination
 from CRM.utils import notify_user
+from django.urls import reverse
 
 
 
@@ -50,8 +51,8 @@ def estimate_save(request, estimate_id=None):
                     estimate.save()
                 
             messages.success(request, 'Estimate saved successfully!')
-            notify_user(request.user, "Estimate for Client "+ client.company_name + " is created")
-            notify_user(client.user,  "new estimate is created for you")
+            notify_user(request.user,reverse('CRM:estimates'), "Estimate for Client "+ client.company_name + " is created")
+            notify_user(client.user,reverse('CRM:estimates'),  "new estimate is created for you")
             return redirect('CRM:estimates')
             
         except (Client.DoesNotExist, Project.DoesNotExist) as e:

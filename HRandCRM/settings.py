@@ -148,3 +148,8 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels.layers.InMemoryChannelLayer"
     }
 }
+
+#payments
+STRIPE_PUBLIC_KEY = "pk_test_51RjjjQRiujLCsU5k62LKoTXXB6B8DAIPt8fyvIuuFJr3DYbjTCcz58WSUXqLDomY7wIS5ldUTCE93HnCh4ps3V9U00yR5SkN8v"
+STRIPE_SECRET_KEY = "sk_test_51RjjjQRiujLCsU5kWpEld8AgmqT68bx0Nuf9QDboRJGymfaY5RFJL0YjYe6AaGNtyXWikcYUXcoJqUU9tZS0ypP900OqxLCOex"
+DOMAIN = "http://localhost:8011"

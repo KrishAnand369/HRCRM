@@ -11,6 +11,9 @@ urlpatterns = [
     path('profile',views.userprofile,name='userprofile'),
     path('saveprofile/',views.save_profile,name='save_profile'),
     
+    path('leads/', views.lead_list, name='lead_list'),
+    path('contact/', views.contact_form, name='contact_us'),
+    
     path('upload-salary-slip/', views.upload_salary_slip, name='upload_salary_slip'),
     path('my-salary-slips/', views.employee_salary_slips, name='employee_salary_slips'),
     path('employee/<int:employee_id>/salary-slips/', views.employee_salary_slips, name='employee_salary_slips'),
@@ -73,4 +76,7 @@ urlpatterns = [
     path('notifications/', notificationView.notification_list, name='notification_list'),
     path('read/<int:pk>/', notificationView.mark_as_read, name='mark_read'),
     path('read-all/', notificationView.mark_all_read, name='mark_all_read'),
+    
+    path('terms-of-service/', views.terms_of_service, name='terms_of_service'),
+    path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
 ]   

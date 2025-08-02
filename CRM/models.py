@@ -281,6 +281,7 @@ from django.utils import timezone
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     message = models.CharField(max_length=255)
+    url = models.URLField(max_length=500, null=True, blank=True)
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
 
@@ -298,3 +299,13 @@ class SalarySlip(models.Model):
 
     def __str__(self):
         return f"{self.employee.username} - {self.month}"
+    
+class Lead(models.Model):
+    name = models.CharField(max_length=255)
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
+    email = models.EmailField()
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.email}"

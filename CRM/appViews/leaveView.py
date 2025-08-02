@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from CRM.models import UserProfile,Client,Project,LeaveApplication
 from CRM.controller import authView
 from CRM.utils import notify_user
+from django.urls import reverse
 
 
 @login_required
@@ -54,7 +55,7 @@ def apply_leave(request):
             to_admin =to,
         )
         
-        notify_user(to.user, "Employee" +request.user.username +"has applied for a leave")
+        notify_user(to.user, reverse('CRM:apply_leave_list'),"Employee" +request.user.username +"has applied for a leave")
         return redirect('CRM:userprofile')
     return redirect('/profile')
 
@@ -70,7 +71,7 @@ def approve_leave(request, leave_id):
         leave_application.status = 'approved'
         try:
             leave_application.save()
-            notify_user(leave_application.employee.user, "Your leave application was Approved")
+            notify_user(leave_application.employee.user,reverse('CRM:my_applications'), "Your leave application was Approved")
         except Exception as e:
             print(f"Error saving leave application: {e}")
     # Redirect back to the leave application list
@@ -88,7 +89,7 @@ def decline_leave(request, leave_id):
         try:
             leave_application.save()
             print("Leave application rejecTed.")
-            notify_user(leave_application.employee.user, "Your leave application was rejected")
+            notify_user(leave_application.employee.user,reverse('CRM:my_applications'), "Your leave application was rejected")
         except Exception as e:
             print(f"Error saving leave application: {e}")
     # Redirect back to the leave application list
@@ -107,7 +108,7 @@ def save_commend_leave(request, leave_id):
         leave_application.admin_comment = admin_comment
         try:
             leave_application.save()
-            notify_user(leave_application.employee.user, "admin made a commend on your leave application")
+            notify_user(leave_application.employee.user,reverse('CRM:my_applications'), "admin made a commend on your leave application")
         except Exception as e:
             print(f"Error saving leave application: {e}")
     # Redirect back to the leave application list

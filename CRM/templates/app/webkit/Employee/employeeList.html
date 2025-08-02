@@ -64,8 +64,16 @@
                             <p class="mb-3">{{ employee.user.email }}</p>
                             
                             <ul class="list-unstyled mb-3">
-                                <li class="bg-secondary-light rounded-circle iq-card-icon-small mr-4"><i class="ri-mail-open-line m-0"></i></li>
-                                <a href="{% url 'private-chat' username=employee.user.username %}"><li class="bg-primary-light rounded-circle iq-card-icon-small mr-4 btn"><i class="ri-chat-3-line m-0"></i></li><a>
+                                <a href="mailto:{{ employee.user.email }}">
+                                    <li class="bg-secondary-light rounded-circle iq-card-icon-small mr-4">
+                                        <i class="ri-mail-open-line m-0"></i>
+                                    </li>
+                                </a>
+                                <a href="{% url 'private-chat' username=employee.user.username %}">
+                                    <li class="bg-primary-light rounded-circle iq-card-icon-small mr-4 btn">
+                                        <i class="ri-chat-3-line m-0"></i>
+                                    </li>
+                                <a>
                             </ul>                                    
 
                             <div class="pt-3 border-top ">
@@ -113,9 +121,21 @@
                         <td>{{ employee.user.email }}</td>
                         <td>
                             <div class="media align-items-center">
-                                <div class="bg-secondary-light rounded-circle iq-card-icon-small mr-3"><i class="ri-mail-open-line m-0"></i></div>
-                                <div class="bg-primary-light rounded-circle iq-card-icon-small mr-3"><i class="ri-chat-3-line m-0"></i></div>
-                                <div class="bg-success-light rounded-circle iq-card-icon-small"><i class="ri-phone-line m-0"></i></div>
+                                 <a href="mailto:{{ employee.user.email }}">
+                                    <div class="bg-secondary-light rounded-circle iq-card-icon-small mr-3">
+                                        <i class="ri-mail-open-line m-0"></i>
+                                    </div>
+                                </a>    
+                                <a href="{% url 'private-chat' username=employee.user.username %}">
+                                    <div class="bg-primary-light rounded-circle iq-card-icon-small mr-3">
+                                        <i class="ri-chat-3-line m-0"></i>
+                                    </div>
+                                </a>
+                                <a href="https://wa.me/{{ employee.user.profile.phone_number }}" target="_blank">
+                                    <div class="bg-success-light rounded-circle iq-card-icon-small">
+                                        <i class="ri-phone-line m-0"></i>
+                                    </div>
+                                </a>
                             </div>
                         </td>
                         <td>

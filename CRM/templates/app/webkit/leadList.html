@@ -1,0 +1,50 @@
+{% extends 'app/webkit/main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row">
+    <div class="col">
+      <h2 class="mb-4">Leads List</h2>
+      <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Name</th>
+              <th scope="col">Phone</th>
+              <th scope="col">Email</th>
+              <th scope="col">Message</th>
+              <th scope="col">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for lead in leads %}
+            <tr>
+              <th scope="row">{{ forloop.counter }}</th>
+              <td>{{ lead.name }}</td>
+              <td>
+                <a href="https://wa.me/{{ lead.phone_number }}" target="_blank">
+                  {{ lead.phone_number }}
+                </a>
+              </td>
+              <td>
+                <a href="mailto:{{ lead.email }}">
+                  {{ lead.email }}
+                </a>
+              </td>
+              <td>{{ lead.message|truncatechars:500 }}</td>
+              <td>{{ lead.created_at|date:"m/d/Y H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="6" class="text-center">No leads yet.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

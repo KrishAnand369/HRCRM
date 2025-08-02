@@ -5,6 +5,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from CRM.models import UserProfile,Client,Project
 from CRM.controller import authView
 from CRM.utils import notify_user
+from django.urls import reverse
 
 
 @login_required
@@ -71,7 +72,7 @@ def project_save(request, project_id=None):
             project.assigned_users.set(assigned_users)
             project.save()
             for user in project.assigned_users.all():
-                notify_user(user.user, name +"Project detailes have been updated")
+                notify_user(user.user,reverse('CRM:project'), name +"Project detailes have been updated")
         else:  # Create new project
             project = Project.objects.create(
                 name=name,
@@ -83,7 +84,7 @@ def project_save(request, project_id=None):
             )
             project.assigned_users.set(assigned_users)
             for user in project.assigned_users.all():
-                notify_user(user.user, "You have been added to new Project:"+name)
+                notify_user(user.user,reverse('CRM:project'), "You have been added to new Project:"+name)
 
         return redirect('CRM:project')
     profile = UserProfile.objects.get(user=request.user)

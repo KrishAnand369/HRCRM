@@ -4,42 +4,51 @@ from django.contrib import messages
 from CRM.models import Team, UserProfile
 from CRM.controller import authView
 from django.db.models import Q
+from CRM.utils import notify_user
+from django.urls import reverse
 
 @login_required
-def create_team(request,team_id=None):
+def create_team(request, team_id=None):
     userRole = authView.get_user_role(request.user)
-    if team_id:
-        team = get_object_or_404(Team,id=team_id)
-    
-        if request.method == 'POST':
-            name = request.POST.get('name')
-            leader_id = request.POST.get('leader')
-            members = request.POST.getlist('members')
-            
-            if team: #update existing team
+
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        leader_id = request.POST.get('leader')
+        members = request.POST.getlist('members')
+
+        if team_id:
+            team = get_object_or_404(Team, id=team_id)
+
+            team.name = name 
+            team.members.set(members)
+            if leader_id:
+                team.leader = get_object_or_404(UserProfile, id=leader_id)
+            team.save()
+
+            messages.success(request, 'Team edited successfully!')
+            return redirect('/team/list')
+
+        else:
+            if request.user.is_superuser:
+                team = Team.objects.create(name=name)
                 team.members.set(members)
                 if leader_id:
-                        team.leader = get_object_or_404(UserProfile, id=leader_id)
+                    team.leader = get_object_or_404(UserProfile, id=leader_id)
                 team.save()
-                messages.success(request, 'Team edited successfully!')
+
+                messages.success(request, 'Team created successfully!')
+                
+                for member in team.members.all():
+                    notify_user(member.user, reverse('CRM:list_team'), f"You are a member of team: {team.name}")
+                if team.leader:
+                    notify_user(team.leader.user, reverse('CRM:list_team'), f"You are the leader of team: {team.name}")
+
                 return redirect('/team/list')
-                # return render(request,"app/webkit/team/teams.html",{'userRole':userRole})
             else:
-                if request.user.is_superuser:
-                    team = Team.objects.create(name=name)
-                    team.members.set(members)
-                    if leader_id:
-                        team.leader = get_object_or_404(UserProfile, id=leader_id)
-                    team.save()
-                    messages.success(request, 'Team created successfully!')
-                    return redirect('/team/list')
-                    # return render(request,"app/webkit/team/teams.html")
-                else:
-                    messages.error(request, 'Only superusers can create teams.')
-                    # return redirect('home')
-                    return redirect('/team/list')
-        return redirect('/team/list')
-        # return render(request,"app/webkit/team/teams.html")
+                messages.error(request, 'Only superusers can create teams.')
+                return redirect('/team/list')
+    return redirect('/team/list')
+    # return render(request,"app/webkit/team/teams.html")
     
 
 @login_required

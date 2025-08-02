@@ -40,6 +40,13 @@
                                 {{ invoice.get_status_display }}
                             </span>
                         </p>
+                        {% if invoice.status != "paid" and userRole == 'client' %}
+                            <a href="{% url 'invoices:create_stripe_checkout_session' invoice.id %}">
+                                <button>Pay with Stripe</button>
+                            </a>
+                        {% elif invoice.status == "paid" and invoice.paid_date %}
+                            <p><strong>Paid on:</strong> <span class="text-success mb-1">{{ invoice.paid_date|date:"M d, Y" }}</span></p>
+                        {% endif %}
                     </div>
                 </div>
             </div>

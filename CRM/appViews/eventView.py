@@ -7,6 +7,8 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from CRM.controller import authView
 from django.db.models import Q
+from CRM.utils import notify_user
+from django.urls import reverse
 
 @login_required
 def calendar_view(request):
@@ -50,6 +52,9 @@ def add_event(request):
             
             if request.user.is_staff and data.get('is_global', False):
                 event.is_global = True
+                employees= UserProfile.objects.all().exclude(user=request.user)
+                for emp in employees:
+                    notify_user(emp.user,reverse('CRM:calendar')," There is a new event created "+ event.title + " by "+ request.user.username)
             else:
                 event.user = request.user
             
